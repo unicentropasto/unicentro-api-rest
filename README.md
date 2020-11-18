@@ -1,2 +1,2 @@
 # unicentro-api-rest
-Api rest para app movil
+api rest móvil
