@@ -219,3 +219,8 @@ const styles = StyleSheet.create({
 
 */
 
+select * from hechos.aforo_ingreso order by 1 desc;
+
+select * from hechos.aforo_salida order by 1 desc;
+
+DATABASE_URL	postgres://mdbsvljjjfhiri:6636d895f0ec9fc782b771f75f6a72ca1568adf7c74efe5f8bdc96b2673db617@ec2-52-5-110-35.compute-1.amazonaws.com:5432/d1nlhajk5a952t
