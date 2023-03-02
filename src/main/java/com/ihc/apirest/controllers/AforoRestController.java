@@ -92,12 +92,15 @@ public class AforoRestController
             //Registando ingreso de cliente
             aforoIngresoRepository.saveAndFlush(aforoIngreso);
 
+            log.info("********* LOG INFO INGRESOS *********");
             aforoTotalClientes = aforoTotalClientes();
+            log.info("********* LOG INFO aforoTotalClientes ********* : " + aforoTotalClientes);
 
             return new ResponseEntity<Long>(aforoTotalClientes, HttpStatus.CREATED);
 		} 
         catch (Exception e) 
-    {
+        {
+            log.info("********* registrarIngreso.Exception ********* : " + e.getMessage());
             return new ResponseEntity<Long>(aforoTotalClientes, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
      }
@@ -115,16 +118,14 @@ public class AforoRestController
 
         try 
         {
-            log.info("********* LOG INFO PANDI *********");
-            log.debug("********* LOG DEBUG PANDI *********");
-            log.trace("********* LOG TRACE PANDI *********");
-            log.warn("********* LOG WARN PANDI *********");
+            log.info("********* LOG INFO SALIDAS *********");
             AforoSalida aforoSalida = new AforoSalida();
             aforoSalida.setFechaSalida(new Date());
 
             aforoTotalClientes = aforoTotalClientes();
             aforoTotalClientes -= 1;
 
+            log.info("********* LOG INFO aforoTotalClientes ********* : " + aforoTotalClientes);
             if(aforoTotalClientes >= 0)
             {
                 //Registando salida de cliente
@@ -135,6 +136,7 @@ public class AforoRestController
 		} 
         catch (Exception e) 
         {
+            log.info("********* registrarSalida.Exception ********* : " + e.getMessage());
             return new ResponseEntity<Long>(aforoTotalClientes, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
      }
@@ -152,8 +154,10 @@ public class AforoRestController
         try 
         {
             long aforoClientesIngreso = aforoIngresoRepository.aforoClientesIngreso();
+            log.info("********* aforoClientesIngreso ********* : " + aforoClientesIngreso);
 
             Long aforoClientesSalida = aforoSalidaRepository.aforoClientesSalida();
+            log.info("********* aforoClientesSalida ********* : " + aforoClientesSalida);
 
             if (null == aforoClientesSalida)
             {
@@ -161,6 +165,8 @@ public class AforoRestController
             }
 
             aforoTotalClientes = aforoClientesIngreso - aforoClientesSalida.longValue();
+
+            log.info("********* aforoTotalClientes ********* : " + aforoTotalClientes);
 
             if(null == aforoTotalClientes || 0 > aforoTotalClientes.longValue())
             {
@@ -171,6 +177,7 @@ public class AforoRestController
 		} 
         catch (Exception e) 
         {
+            log.info("********* aforoTotalClientes.Exception() *********: " + e.getMessage());
             return (long)0;
 		}
      }
