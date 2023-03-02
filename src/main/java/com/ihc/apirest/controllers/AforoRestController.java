@@ -10,6 +10,7 @@ import com.ihc.apirest.repository.AforoIngresoRepository;
 import com.ihc.apirest.repository.AforoSalidaRepository;
 import com.ihc.apirest.repository.ParametroRepository;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @RestController
@@ -34,6 +37,8 @@ public class AforoRestController
 
     @Autowired
     ParametroRepository parametroRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(AforoRestController.class);
 
 
 
@@ -110,6 +115,10 @@ public class AforoRestController
 
         try 
         {
+            log.info("********* LOG INFO PANDI *********");
+            log.debug("********* LOG DEBUG PANDI *********");
+            log.trace("********* LOG TRACE PANDI *********");
+            log.warn("********* LOG WARN PANDI *********");
             AforoSalida aforoSalida = new AforoSalida();
             aforoSalida.setFechaSalida(new Date());
 
