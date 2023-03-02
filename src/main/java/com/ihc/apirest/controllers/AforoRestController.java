@@ -83,16 +83,23 @@ public class AforoRestController
         {
             AforoIngreso aforoIngreso = new AforoIngreso();
             aforoIngreso.setFechaIngreso(new Date());
+
+            System.out.println("****** AFORO INGRESOS ********");
             
             //Registando ingreso de cliente
             aforoIngresoRepository.saveAndFlush(aforoIngreso);
 
+            System.out.println("****** GUARDO INGRESOS ********");
+
             aforoTotalClientes = aforoTotalClientes();
+
+            System.out.println("****** TOTA INGRESOS ******** " + aforoTotalClientes.toString());
             
             return new ResponseEntity<Long>(aforoTotalClientes, HttpStatus.CREATED);
 		} 
         catch (Exception e) 
         {
+            System.out.println("****** ERRRO INGRESOS ********   " + e.getMessage());
             return new ResponseEntity<Long>(aforoTotalClientes, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
      }
