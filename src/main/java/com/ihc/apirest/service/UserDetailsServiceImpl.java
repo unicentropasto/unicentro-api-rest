@@ -16,10 +16,10 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
 
   @Override
-  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException
+  public UserDetails loadUserByUsername(String identificationDocument) throws UsernameNotFoundException
   {
-    //El correo es el username de la aplicacion
-    UserDetails userDetails = customerService.getCustomerByEmail(email);
+    // El documento de identificación es el username de la aplicacion
+    UserDetails userDetails = customerService.getCustomerByIdentificationDocument(identificationDocument);
 
     if (null == userDetails)
     {

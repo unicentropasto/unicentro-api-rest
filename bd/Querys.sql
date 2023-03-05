@@ -2,25 +2,31 @@ select * from appmall.stores
 order by name
 ;
 
-delete from appmall.stores;
+--delete from appmall.stores;
 
 
 
 select * from appmall.promotions p;
 
-delete from appmall.promotions;
+--delete from appmall.promotions;
 
 
---yyyy-mm-dd
-select *
+
+select * 
+--emai_cli, count(1)
 FROM sisbol.cliente
---where nrod_cli = '13072207'
-order by 1 
+where 1=1
+--and nrod_cli = '13072207'
+and emai_cli = 'mario42004@gmail.com'
+--group by emai_cli having count(1) > 3
 ;
 
+https://unicentro-api-rest.herokuapp.com/unicentro-service/v1/customers/names
+https://unicentro-api-rest.herokuapp.com/unicentro-service/v1/categories
 
-https://drive.google.com/file/d/1i1Zg7quDGjDN0uqH8g9tzVxxMkLL_60t/view?usp=share_link
-https://drive.google.com/uc?id=1i1Zg7quDGjDN0uqH8g9tzVxxMkLL_60t
+INSERT INTO sisbol.cliente (tpid_cli,nrod_cli,exped_cli,nomb_cli,apel_cli,dire_cli,tele_cli,fnac_cli,sexo_cli,emai_cli,prof_cli,punt_cli,fuco_cli,id_barrio,customer_type,"password",id_role,pet,terms_conditions) VALUES
+	 ('01001','1085253061','PASTO-NARIÑO','MARIO FERNANDO','JOJOA ACOSTA','calle 28 n 20-50 torres del cielo 2','3182102258','1986-09-29','M','mario42004@gmail.com','04001',0,NULL,561,'WEB',NULL,2,NULL,NULL);
+
 
 select * 
 --count(1)
@@ -223,4 +229,11 @@ select * from hechos.aforo_ingreso order by 1 desc;
 
 select * from hechos.aforo_salida order by 1 desc;
 
-DATABASE_URL	postgres://mdbsvljjjfhiri:6636d895f0ec9fc782b771f75f6a72ca1568adf7c74efe5f8bdc96b2673db617@ec2-52-5-110-35.compute-1.amazonaws.com:5432/d1nlhajk5a952t
+select sum(conteo) from hechos.aforo_ingreso where fecha_ingreso >= CURRENT_DATE;
+
+select sum(conteo) from hechos.aforo_salida where fecha_salida >= CURRENT_DATE;
+
+
+
+
+

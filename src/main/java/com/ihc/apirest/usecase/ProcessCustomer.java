@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.text.SimpleDateFormat;
 
@@ -84,7 +85,7 @@ public class ProcessCustomer
           isExistEmail = customerService.existsByEmail(customer.getEmail());
         }
 
-        // Todo actualización de password se debe hacer individual, el password no se actualiza con un save ya que contiene la propiedad updatable = false en el entity Customer
+        // Toda actualización de password se debe hacer individual, el password no se actualiza con un save ya que contiene la propiedad updatable = false en el entity Customer
         customerService.updatePasswordCustomer(customer);
       }
 
@@ -126,9 +127,9 @@ public class ProcessCustomer
 
     try
     {
-      //El correo es el username de la aplicacion
-      //Se valida autenticación por medio de correo y clave
-      Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(customer.getEmail(), customer.getPassword()));
+      //El documento de identificación es el username de la aplicacion
+      //Se valida autenticación por medio de el documento de identificación y clave
+      Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(customer.getIdentificationDocument(), customer.getPassword()));
         
       SecurityContextHolder.getContext().setAuthentication(authentication);
       
@@ -170,20 +171,6 @@ public class ProcessCustomer
     mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_OK_CODE);
 
     return mapResponse;
-
-    // try
-    // {
-    //   boolean isValid = processToken.validateToken(headerAuthorization);
-
-    //   mapResponse.put(Constants.RESPONSE_CODE, (isValid ? Constants.RESPONSE_OK_CODE : Constants.RESPONSE_ERROR_CODE));
-
-    //   return mapResponse;
-    // }
-    // catch (Exception e) 
-    // {
-    //   mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_ERROR_CODE);
-    //   return mapResponse;
-    // }
   }
 
 
@@ -195,23 +182,25 @@ public class ProcessCustomer
   public  Map<String, Object> updateCustomer(Customer customer, String headerAuthorization)
   {
     Map<String, Object> mapResponse = new HashMap<>();
-    boolean isExistCustomer = false;
+    boolean isExistEmail = false;
 
     try
     {
       // Se obtiene el parametro idCustomer de la propiedad claims del token
       Long idCustomer = processToken.getIdCustomerFromToken(headerAuthorization);
-      String email = processToken.getEmailFromToken(headerAuthorization);
+
+      // Obteniendo el cliente apartir del idCustomer
+      Optional<Customer> customerBD = customerService.getCustomerById(idCustomer);
+
 
       if(null != idCustomer)
       {
-
-        if(!customer.getEmail().equals(email))
+        if(!customer.getEmail().equals(customerBD.get().getEmail()))
         {
-          isExistCustomer = customerService.existsByEmail(customer.getEmail());
+          isExistEmail = customerService.existsByEmail(customer.getEmail());
         }
 
-        if(isExistCustomer)
+        if(isExistEmail)
         {
           mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_FAILED_VALIDATION_CODE);
 
@@ -221,7 +210,7 @@ public class ProcessCustomer
         {
           customer.setIdCustomer(idCustomer);
 
-          if(!customer.getEmail().equals(email))
+          if(!customer.getEmail().equals(customerBD.get().getEmail()))
           {
             String token = processToken.createToken(customer);
             mapResponse.put(Constants.RESPONSE_TOKEN, token);
@@ -290,15 +279,15 @@ public class ProcessCustomer
 
     try
     {
-      String email = processToken.getEmailFromToken(headerAuthorization);
+      // Se obtiene el parametro idCustomer de la propiedad claims del token
+      Long idCustomer = processToken.getIdCustomerFromToken(headerAuthorization);
 
-      Customer customer = customerService.getCustomerByEmail(email);
+      Optional<Customer> customer = customerService.getCustomerById(idCustomer);
 
-      if (null != customer) 
+      if(customer.isPresent())
       {
-        customer.setPassword(null);
         mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_OK_CODE);
-        mapResponse.put(Constants.RESPONSE_DATA, customer.getFirstName().concat("-").concat(customer.getGender()));
+        mapResponse.put(Constants.RESPONSE_DATA, customer.get().getFirstName().concat("-").concat(customer.get().getGender()));
       } 
       else 
       {
@@ -326,15 +315,16 @@ public class ProcessCustomer
 
     try
     {
-      String email = processToken.getEmailFromToken(headerAuthorization);
+      // Se obtiene el parametro idCustomer de la propiedad claims del token
+      Long idCustomer = processToken.getIdCustomerFromToken(headerAuthorization);
 
-      Customer customer = customerService.getCustomerByEmail(email);
+      Optional<Customer> customer = customerService.getCustomerById(idCustomer);
 
-      if (null != customer) 
+      if (customer.isPresent())
       {
-        customer.setPassword(null);
+        customer.get().setPassword(null);
         mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_OK_CODE);
-        mapResponse.put(Constants.RESPONSE_DATA, customer);
+        mapResponse.put(Constants.RESPONSE_DATA, customer.get());
       } 
       else 
       {

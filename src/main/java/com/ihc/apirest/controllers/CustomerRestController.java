@@ -35,7 +35,7 @@ public class CustomerRestController
    * @param customer Cliente a registrar
    * @return true si el cliente fue registrado correctamente, en caso contrario false
    */
-  @PostMapping(value="signup")
+  @PostMapping(value="/signup")
   public ResponseEntity<Map<String, Object>> signUp(@RequestBody Customer customer)
   {
     Map<String, Object> mapResponse = processCustomer.signUp(customer);
@@ -108,7 +108,7 @@ public class CustomerRestController
    * @param headerAuthorization Contiene el token
    * @return Cliente encontrado
    */
-  @GetMapping(value = "names")
+  @GetMapping(value = "/names")
   public ResponseEntity<Map<String, Object>> getCustomerName(@RequestHeader("Authorization") String headerAuthorization) 
   {
     Map<String, Object> mapResponse = processCustomer.getCustomerName(headerAuthorization);

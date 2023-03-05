@@ -82,7 +82,7 @@ public class CustomerService
    * @param email Correo electrónico con el cual se buscara el cliente
    * @return Cliente encontrado
    */
-  public Customer getCustomerByIdentificationDocument(String identificationDocument) throws Exception 
+  public Customer getCustomerByIdentificationDocument(String identificationDocument) throws UsernameNotFoundException 
   {
     return customerRepository.findByIdentificationDocument(identificationDocument);
   }

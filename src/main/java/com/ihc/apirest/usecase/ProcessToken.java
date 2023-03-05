@@ -36,7 +36,7 @@ public class ProcessToken
   
   /**
    * Método que permite crear un token a partir de la autenticación del customer (login y password)
-   * @param customer Cliente que contiene roles y el username(email)
+   * @param customer Cliente que contiene roles y el username(identificationDocument)
    * @return Token
    */
   public String createToken(Customer customer) 
@@ -49,7 +49,7 @@ public class ProcessToken
     {
 
       return Jwts.builder()
-                  .setSubject(customer.getEmail())
+                  .setSubject(customer.getIdentificationDocument())
                   // .setExpiration(new Date(60000))
                   .setExpiration(new Date(new Date().getTime() + expiration * 1000))
                   .addClaims(params)
@@ -67,7 +67,7 @@ public class ProcessToken
 
   
   /**
-   * Método que permite obtener el username(email) a partir del token
+   * Método que permite obtener el username(identificationDocument) a partir del token
    * @param token Contiene el username
    * @return Username
    */
@@ -80,9 +80,9 @@ public class ProcessToken
                           .parseClaimsJws(token)
                           .getBody();
       
-      String email = claims.getSubject();
+      String identificationDocument = claims.getSubject();
 
-      return new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
+      return new UsernamePasswordAuthenticationToken(identificationDocument, null, Collections.emptyList());
     }
     catch(JwtException e)
     {
@@ -145,11 +145,11 @@ public class ProcessToken
 
 
   /**
-   * Método que permite obtener el email a partir del token
-   * @param headerAuthorization Token que contiene el email
-   * @return Email
+   * Método que permite obtener el documento de identificación a partir del token
+   * @param headerAuthorization Token que contiene el documento de identificación
+   * @return Documento de identificación
    */
-  public String getEmailFromToken(String headerAuthorization) 
+  public String getIdentificationDocumentFromToken(String headerAuthorization) 
   {
     String token = getToken(headerAuthorization);
 

@@ -121,7 +121,6 @@ public class Customer implements UserDetails
 	}
 
 
-	// @JsonIgnore
 	@Override
 	public String getPassword() 
 	{
@@ -133,7 +132,7 @@ public class Customer implements UserDetails
 	@Override
 	public String getUsername() 
 	{
-		return email;
+		return identificationDocument;
 	}
 
 
