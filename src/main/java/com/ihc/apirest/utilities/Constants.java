@@ -29,5 +29,6 @@ public class Constants
   public static final String RESPONSE_TOKEN = "RESPONSE_TOKEN";
   public static final String RESPONSE_DATA = "RESPONSE_DATA";
 
-  public static final String URL_IMAGE_DEFAULT = "https://drive.google.com/uc?id=1j1dJR4cAZgsbGXbYDjHdR30aTFLkQyBn";
+  // Imagen por default, hace referencia a la imagen "fondo-marcaagua-2.png" ubicada en el drive de unicentro
+  public static final String URL_IMAGE_DEFAULT = "https://drive.google.com/uc?id=1Qqwo1XvIuJYfhbiA85dbRsNES3pGksFJ";
 }

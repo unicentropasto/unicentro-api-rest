@@ -17,20 +17,14 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table(schema="sisbol", name = "tipo")
-public class VWIdentificationType 
+@Table(schema="sisbol", name = "barrio")
+public class Neighborhood 
 {
 
   @Id
-	@Column(name = "codi_tip")
-	private Long idIdentificationType;
+	@Column(name = "id_barrio")
+	private Long idNeighborhood;
   
-  @Column(name = "valo_tip")
-	private String name;
-
-  @Column(name = "desc_tip")
-	private String description;
-
-	@Column(name = "codi_gru")
-	private String groupCode;
+  @Column(name = "nombre_bar")
+	private String neighborhood;
 }

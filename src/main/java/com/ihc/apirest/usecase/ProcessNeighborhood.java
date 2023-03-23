@@ -7,17 +7,17 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ihc.apirest.models.VWNeighborhood;
-import com.ihc.apirest.service.VWNeighborhoodService;
+import com.ihc.apirest.models.Neighborhood;
+import com.ihc.apirest.service.NeighborhoodService;
 import com.ihc.apirest.utilities.Constants;
 
 
 @Component
-public class ProcessVWNeighborhood 
+public class ProcessNeighborhood 
 {
 
   @Autowired
-  VWNeighborhoodService vwNeighborhoodService;
+  NeighborhoodService neighborhoodService;
   
 
   /**
@@ -31,7 +31,7 @@ public class ProcessVWNeighborhood
 
     try
     {
-      List<VWNeighborhood> lstNeighborhoods = vwNeighborhoodService.getAllNeighborhoods();
+      List<Neighborhood> lstNeighborhoods = neighborhoodService.getAllNeighborhoods();
       
       mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_OK_CODE);
       mapResponse.put(Constants.RESPONSE_DATA, lstNeighborhoods);

@@ -4,11 +4,11 @@ package com.ihc.apirest.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ihc.apirest.models.VWNeighborhood;
+import com.ihc.apirest.models.Neighborhood;
 
 
 @Repository
-public interface VWNeighborhoodRepository extends JpaRepository<VWNeighborhood, Long>
+public interface NeighborhoodRepository extends JpaRepository<Neighborhood, Long>
 {
 
 }

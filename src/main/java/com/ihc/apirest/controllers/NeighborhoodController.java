@@ -1,7 +1,7 @@
 package com.ihc.apirest.controllers;
 
 
-import com.ihc.apirest.usecase.ProcessVWIdentificationType;
+import com.ihc.apirest.usecase.ProcessNeighborhood;
 
 import java.util.Map;
 
@@ -16,24 +16,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/identificationstype")
+@RequestMapping("/neighborhoods")
 @CrossOrigin("*")
-public class VWIdentificationTypeController 
+public class NeighborhoodController 
 {
 
   @Autowired
-  ProcessVWIdentificationType processVWIdentificationType;
+  ProcessNeighborhood processNeighborhood;
 
 
   /**
-   * Método que permite otener todos los tipos de identificación
-   * @return Listado de tipos de identificación
+   * Método que permite otener todos los barrios
+   * @return Listado de barrios
    */
   @GetMapping(value = "")
-  public ResponseEntity<Map<String, Object>> getAllIdentificationsType() 
+  public ResponseEntity<Map<String, Object>> getAllNeighborhoods() 
   {
-    Map<String, Object> mapResponse = processVWIdentificationType.getAllIdentificationsType();
-  
+    Map<String, Object> mapResponse = processNeighborhood.getAllNeighborhoods();
+
     return new ResponseEntity<Map<String, Object>>(mapResponse, HttpStatus.OK);
   }
 }

@@ -52,7 +52,8 @@ public class ProcessStore
 
     for (List<String> lstRowExcel : lstDataExcel) 
     {
-      // La columna 10 del excel de promociones representa el nombre de la imagen que se debe buscar en el drive de google para obtener su ID
+          System.out.println(lstRowExcel.get(1));
+      // La columna 10 del excel representa el nombre de la imagen que se debe buscar en el drive de google para obtener su ID
       File fileImage = "".equals(lstRowExcel.get(11)) ? null : googleService.getFileGoogleDrive(lstRowExcel.get(11)); // Imagen logo
       File fileImageFacade = "".equals(lstRowExcel.get(12)) ? null : googleService.getFileGoogleDrive(lstRowExcel.get(12)); // Imagen fachada
 

@@ -7,40 +7,39 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ihc.apirest.models.VWIdentificationType;
-import com.ihc.apirest.service.VWIdentificationTypeService;
+import com.ihc.apirest.models.ConfigurationImage;
+import com.ihc.apirest.service.ConfigurationImageService;
 import com.ihc.apirest.utilities.Constants;
 
 
 @Component
-public class ProcessVWIdentificationType 
+public class ProcessConfigurationImage 
 {
-
   @Autowired
-  VWIdentificationTypeService vwIdentificationTypeService;
-  
+  ConfigurationImageService configurationImageService;
+
 
   /**
-   * Método que permite otener todos los tipos de identificación
-   * @param groupCode Codigo de grupo
-   * @return Listado de tipos de identificación
+   * Método que permite otener toda la configuración de imágenes
+   * @return Listado de configuración de imágen
    */
-  public Map<String, Object> getAllIdentificationsType()
+  public  Map<String, Object> geConfigurationImagesByType(String type)
   {
     Map<String, Object> mapResponse = new HashMap<>();
 
     try
     {
-      List<VWIdentificationType> lstIdentificationsType = vwIdentificationTypeService.getAllIdentificationsType(Constants.GROPU_CODE);
+      List<ConfigurationImage> lstConfigurationImages = configurationImageService.geConfigurationImagesByType(type);
 
       mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_OK_CODE);
-      mapResponse.put(Constants.RESPONSE_DATA, lstIdentificationsType);
+      mapResponse.put(Constants.RESPONSE_DATA, lstConfigurationImages);
 
       return mapResponse;
     }
     catch (Exception e) 
     {
       mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_ERROR_CODE);
+      
       return mapResponse;
     }
   }

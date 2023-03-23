@@ -21,8 +21,9 @@ and emai_cli = 'mario42004@gmail.com'
 --group by emai_cli having count(1) > 3
 ;
 
-https://unicentro-api-rest.herokuapp.com/unicentro-service/v1/customers/names
-https://unicentro-api-rest.herokuapp.com/unicentro-service/v1/categories
+uc?id=
+
+https://drive.google.com/uc?id=1OgpNidwbdCDZB3d4yGL7oQgyRdsOL3VH
 
 INSERT INTO sisbol.cliente (tpid_cli,nrod_cli,exped_cli,nomb_cli,apel_cli,dire_cli,tele_cli,fnac_cli,sexo_cli,emai_cli,prof_cli,punt_cli,fuco_cli,id_barrio,customer_type,"password",id_role,pet,terms_conditions) VALUES
 	 ('01001','1085253061','PASTO-NARIÑO','MARIO FERNANDO','JOJOA ACOSTA','calle 28 n 20-50 torres del cielo 2','3182102258','1986-09-29','M','mario42004@gmail.com','04001',0,NULL,561,'WEB',NULL,2,NULL,NULL);
@@ -32,15 +33,18 @@ select *
 --count(1)
 from appmall.stores s
 where 1=1
---and s.name like '%GIROS%' 
---or s.name like '%CAF%'
---and s.name like '%POLL%'
---and s.store_number like (select '%'||(STRING_TO_ARRAY(t.desc_tip,' '))[1]||'%' FROM sisbol.tipo t where 1=1 and t.codi_gru = '03' and t.codi_tip = '03002')
-order by s."name"
+--and url_store_logo like '%1Qqwo1XvIuJYfhbiA85dbRsNES3pGksFJ%'
+--and id_store = 4
+--and id_category = 4
+order by 1--,s."name"
 ;
 
+update appmall.stores set url_store_logo = 'https://drive.google.com/uc?id=1OgpNidwbdCDZB3d4yGL7oQgyRdsOL3VH' where id_store = 104;
+
+update appmall.stores set url_store_logo = 'https://drive.google.com/uc?export=view&id=1JxQiRNL9nallmYTjiQ0qXJghUa63O8gr', url_store_image = 'https://drive.google.com/uc?export=view&id=1JxQiRNL9nallmYTjiQ0qXJghUa63O8gr';
 
 
+--https://medium.com/pic-s-curso-básico-de-react-native/flatlist-infinite-scroll-clase-4-b7703a8c8fcb ejemplo de paginacion
 
 
 --delete from appmall.stores;
@@ -53,10 +57,6 @@ select *
 from appmall.menu_options
 ;
 
-mailto:publicidadymercadeo@ccunicentropasto.com
-
-, 
-
 
 
 select *
@@ -66,10 +66,18 @@ from appmall.categories c
 
 select * from appmall.vw_neighborhoods vn;
 
+INSERT into
+
 --analista.credito@coopcarvajal.com
 
 --Carta para levantamiento de prenda 
 
+
+
+select *
+from appmall.configuration_images
+order by 1
+;
 
 
 

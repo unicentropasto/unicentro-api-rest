@@ -6,18 +6,18 @@ drop table appmall.stores; commit;
 drop table appmall.categories; commit;
 DROP VIEW appmall.vw_neighborhoods; commit;
 DROP VIEW appmall.vw_identification_types; commit;
-drop table appmall.configurations; commit;
+drop table appmall.configuration_images; commit;
 drop table appmall.states; commit;
 
 commit;
 
 
-CREATE TABLE appmall.configurations (
+CREATE TABLE appmall.configuration_images (
 	id_configuration bigserial NOT NULL,
 	description varchar(400) NOT NULL,
 	value varchar(400) NOT NULL,
 	"type" varchar(50) NOT NULL,
-	CONSTRAINT configurations_pkey PRIMARY KEY (id_configuration)
+	CONSTRAINT configuration_images_pkey PRIMARY KEY (id_configuration)
 );
 
 
@@ -141,11 +141,10 @@ commit;
 
 
 -- DATOS BASICOS DEL SISTEMA
-INSERT INTO appmall.configurations (description,value,type) VALUES
+INSERT INTO appmall.configuration_images (description,value,type) VALUES
 	 ('url imagen sorteos','https://drive.google.com/uc?id=1qUDBSVMpzdDvplwkw43k2sPzU50PGb9g', 'raffles'),
 	 ('url imagen banner 1','https://drive.google.com/uc?id=1xMQkLbEUjHkxbdJI6k137fma9sBWnb9t', 'banner'),
-	 ('url imagen banner 2','https://drive.google.com/uc?id=1GUnjHmt-OiTmqLRTzWBfDNc5EsiC6Dcx', 'banner'),
- 	 ('url logo home tab bar','https://drive.google.com/uc?id=1OgpNidwbdCDZB3d4yGL7oQgyRdsOL3VH', 'home');
+	 ('url imagen banner 2','https://drive.google.com/uc?id=1GUnjHmt-OiTmqLRTzWBfDNc5EsiC6Dcx', 'banner');
 
 commit;
 
