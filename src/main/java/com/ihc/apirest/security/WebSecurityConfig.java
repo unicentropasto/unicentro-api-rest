@@ -49,6 +49,7 @@ public class WebSecurityConfig
         .antMatchers("/aforos/ingresos").permitAll()
         .antMatchers("/aforos/salidas").permitAll()
         .antMatchers("/configurations/images/types/{type}").permitAll()
+        .antMatchers("/configurations/images/loads").permitAll()
         .anyRequest()
         .authenticated()
         .and()

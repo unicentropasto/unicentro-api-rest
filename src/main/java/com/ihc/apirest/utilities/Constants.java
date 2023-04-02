@@ -30,5 +30,5 @@ public class Constants
   public static final String RESPONSE_DATA = "RESPONSE_DATA";
 
   // Imagen por default, hace referencia a la imagen "fondo-marcaagua-2.png" ubicada en el drive de unicentro
-  public static final String URL_IMAGE_DEFAULT = "https://drive.google.com/uc?id=1Qqwo1XvIuJYfhbiA85dbRsNES3pGksFJ";
+  public static final String URL_IMAGE_DEFAULT = "https://res.cloudinary.com/hrqvk3zwl/image/upload/v1680399034/image-repository/icon-tumundo_ojm5ic.png";
 }

@@ -10,6 +10,7 @@ import com.ihc.apirest.models.Promotion;
 import com.ihc.apirest.models.Store;
 import com.ihc.apirest.service.PromotionService;
 import com.ihc.apirest.service.StoreService;
+import com.ihc.apirest.service.CloudinaryService;
 import com.ihc.apirest.service.GoogleService;
 import com.ihc.apirest.utilities.Constants;
 import com.ihc.apirest.utilities.GenericFunctions;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.google.api.services.drive.model.File;
+// import com.google.api.services.drive.model.File;
 
 
 @Component
@@ -28,6 +29,9 @@ public class ProcessPromotion
 {
   @Autowired
   GoogleService googleService;
+
+  @Autowired
+  CloudinaryService cloudinaryService;
 
   @Autowired
   PromotionService promotionService;
@@ -79,7 +83,8 @@ public class ProcessPromotion
     for (List<String> lstRowExcel : lstDataExcel) 
     {
       // La columna 10 del excel de promociones representa el nombre de la imagen que se debe buscar en el drive de google para obtener su ID
-      File fileImage = "".equals(lstRowExcel.get(5)) ? null : googleService.getFileGoogleDrive(lstRowExcel.get(5)); // Imagen promoción
+      // File fileImage = "".equals(lstRowExcel.get(5)) ? null : googleService.getFileGoogleDrive(lstRowExcel.get(5)); // Imagen promoción
+      String fileImage = "".equals(lstRowExcel.get(5)) ? null : cloudinaryService.loadImage(lstRowExcel.get(5)); // Imagen logo
 
       Store store = storeService.getIdStoreByStoreNumber(lstRowExcel.get(0).trim());
 
@@ -94,7 +99,8 @@ public class ProcessPromotion
             "".equals(lstRowExcel.get(2)) ? null : lstRowExcel.get(2), // Descripción
             "".equals(lstRowExcel.get(3)) ? null : GenericFunctions.castNumericCell(lstRowExcel.get(3)), // Fecha inicio
             "".equals(lstRowExcel.get(4)) ? null : GenericFunctions.castNumericCell(lstRowExcel.get(4)), // Fecha fin
-            (null != fileImage) ? "https://drive.google.com/uc?id=" + fileImage.getId() : Constants.URL_IMAGE_DEFAULT, // Url imagen promoción
+            // (null != fileImage) ? "https://drive.google.com/uc?id=" + fileImage.getId() : Constants.URL_IMAGE_DEFAULT, // Url imagen promoción
+            (null != fileImage) ? fileImage : Constants.URL_IMAGE_DEFAULT, // Url imagen promoción
             new Date()
         );
   

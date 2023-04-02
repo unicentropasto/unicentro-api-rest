@@ -14,5 +14,5 @@ public interface GoogleService
 {
   List<List<String>> loadDataFileGoogleDrive(String fileName, String sheetName, int numColumn) throws  IOException, GeneralSecurityException;
 
-  public File getFileGoogleDrive(String fileName) throws IOException, GeneralSecurityException;
+  File getFileGoogleDrive(String fileName) throws IOException, GeneralSecurityException;
 }

@@ -6,8 +6,6 @@ order by name
 
 
 
-select * from appmall.promotions p;
-
 --delete from appmall.promotions;
 
 
@@ -29,20 +27,37 @@ INSERT INTO sisbol.cliente (tpid_cli,nrod_cli,exped_cli,nomb_cli,apel_cli,dire_c
 	 ('01001','1085253061','PASTO-NARIÑO','MARIO FERNANDO','JOJOA ACOSTA','calle 28 n 20-50 torres del cielo 2','3182102258','1986-09-29','M','mario42004@gmail.com','04001',0,NULL,561,'WEB',NULL,2,NULL,NULL);
 
 
+
+
 select * 
 --count(1)
 from appmall.stores s
 where 1=1
---and url_store_logo like '%1Qqwo1XvIuJYfhbiA85dbRsNES3pGksFJ%'
+and (url_store_logo like '%ojm5ic%' or url_store_image like '%ojm5ic%')
 --and id_store = 4
 --and id_category = 4
 order by 1--,s."name"
 ;
 
-update appmall.stores set url_store_logo = 'https://drive.google.com/uc?id=1OgpNidwbdCDZB3d4yGL7oQgyRdsOL3VH' where id_store = 104;
 
-update appmall.stores set url_store_logo = 'https://drive.google.com/uc?export=view&id=1JxQiRNL9nallmYTjiQ0qXJghUa63O8gr', url_store_image = 'https://drive.google.com/uc?export=view&id=1JxQiRNL9nallmYTjiQ0qXJghUa63O8gr';
+select *
+from appmall.categories c
+;
 
+select *
+from appmall.configuration_images
+order by 1
+;
+
+select * from appmall.promotions p;
+
+
+--https://asset.cloudinary.com/hrqvk3zwl/6650081ff266343188184a006f946b3b
+
+
+update appmall.stores set url_store_logo = 'https://res.cloudinary.com/hrqvk3zwl/image/upload/v1680374988/image-repository/1-01_cafetto_logo_2022_yrkkbg.jpg', url_store_image = 'https://res.cloudinary.com/hrqvk3zwl/image/upload/v1680374981/image-repository/1-01_cafetto_fachada_2022_uflh2l.jpg';
+
+https://res.cloudinary.com/hrqvk3zwl/image/upload/v1680379727/image-repository/icon-tiendas-home_pihde4.png
 
 --https://medium.com/pic-s-curso-básico-de-react-native/flatlist-infinite-scroll-clase-4-b7703a8c8fcb ejemplo de paginacion
 
@@ -59,10 +74,6 @@ from appmall.menu_options
 
 
 
-select *
-from appmall.categories c
-;
-
 
 select * from appmall.vw_neighborhoods vn;
 
@@ -74,10 +85,7 @@ INSERT into
 
 
 
-select *
-from appmall.configuration_images
-order by 1
-;
+
 
 
 
