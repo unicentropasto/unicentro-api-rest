@@ -42,6 +42,7 @@ order by 1--,s."name"
 
 select *
 from appmall.categories c
+order by name
 ;
 
 select *

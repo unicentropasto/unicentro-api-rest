@@ -25,6 +25,6 @@ public class CategoryService
    */
   public List<Category> getAllCategories() throws Exception 
   {
-    return categoryRepository.findAll();
+    return categoryRepository.findAllByOrderByIdCategoryAsc();
   }
 }

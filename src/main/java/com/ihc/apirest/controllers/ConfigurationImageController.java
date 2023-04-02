@@ -67,7 +67,7 @@ public class ConfigurationImageController
       lstImages.add("icon-06.png");
       lstImages.add("icon-07.png");
 
-      lstImages.add("icon-sorteos.png");
+      lstImages.add("sorteos.jpg");
       lstImages.add("banner-626x352-42.png");
       lstImages.add("banner-626x352-43.png");
 
