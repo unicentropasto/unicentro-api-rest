@@ -8,14 +8,17 @@ order by name
 
 --delete from appmall.promotions;
 
-
+select * 
+FROM sisbol.barrio ba
+order by 1
+;
 
 select * 
 --emai_cli, count(1)
 FROM sisbol.cliente
 where 1=1
---and nrod_cli = '13072207'
-and emai_cli = 'mario42004@gmail.com'
+and nrod_cli in ('13072207','1107034509')
+--and emai_cli = 'mario42004@gmail.com'
 --group by emai_cli having count(1) > 3
 ;
 
@@ -33,10 +36,10 @@ select *
 --count(1)
 from appmall.stores s
 where 1=1
-and (url_store_logo like '%ojm5ic%' or url_store_image like '%ojm5ic%')
+--and (url_store_logo like '%ojm5ic%' or url_store_image like '%ojm5ic%')
 --and id_store = 4
 --and id_category = 4
-order by 1--,s."name"
+order by s.name
 ;
 
 
@@ -78,7 +81,7 @@ from appmall.menu_options
 
 select * from appmall.vw_neighborhoods vn;
 
-INSERT into
+
 
 --analista.credito@coopcarvajal.com
 
@@ -154,103 +157,70 @@ where c.codi_bol in (select b.codi_bol from sisbol.boleta b where b.codi_cli = '
 ;
 
 
-/*
-https://www.youtube.com/watch?v=i8bni7mUqXE
 
-import React, { useState, useEffect } from 'react';
-import { Platform, Text, View, StyleSheet } from 'react-native';
-import Device from 'expo-device';
-import * as Location from 'expo-location';
 
-export default function App() {
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
 
-  useEffect(() => 
-  {
-    // console.log("useEffect Registration");
 
-    const loadData = async () => 
-    {
-      if (Platform.OS === 'android') {
-        console.log(Platform.OS)
-      }
 
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
+/***************************************** MAQUILLAR AFORO ******************************************/
+ALTER TABLE hechos.aforo_ingreso DISABLE TRIGGER trigger_conteo_ingreso;
+ALTER TABLE hechos.aforo_salida DISABLE TRIGGER trigger_conteo_salida;
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      console.log(JSON.stringify(location));
-    }
-    loadData();
-  }, []);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (Platform.OS === 'android' && !Device.isDevice) {
-  //       setErrorMsg(
-  //         'Oops, this will not work on Snack in an Android Emulator. Try it on your device!'
-  //       );
-  //       return;
-  //     }
-      // let { status } = await Location.requestForegroundPermissionsAsync();
-      // if (status !== 'granted') {
-      //   setErrorMsg('Permission to access location was denied');
-      //   return;
-      // }
+--no te olvide yo del futuro de preguntarle al chat gpt como disable funcition xq el trigger las llama
 
-      // let location = await Location.getCurrentPositionAsync({});
-      // console.log("entro")
-      // setLocation(location);
-  //   })();
-  // }, []);
+create table hechos.aforo_ingreso_bk as select * from hechos.aforo_ingreso;
+create table hechos.aforo_salida_bk as select * from hechos.aforo_salida;
 
-  let text = 'Waiting.....';
 
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    console.log("entro..")
-    text = JSON.stringify(location);
-  }
+delete
+from hechos.aforo_ingreso
+where date_trunc('day', fecha_ingreso) between TO_DATE('20230302','YYYYMMDD') and TO_DATE('20230302','YYYYMMDD')
+;
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.paragraph}>{text}</Text>
-      <Text style={styles.paragraph}>errorMsg: {errorMsg}</Text>
-      
-    </View>
-  );
-}
+select *
+from hechos.aforo_ingreso
+where date_trunc('day', fecha_ingreso) between TO_DATE('20230302','YYYYMMDD') and TO_DATE('20230302','YYYYMMDD')
+;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  paragraph: {
-    fontSize: 18,
-    textAlign: 'center',
-  },
-});
+INSERT INTO hechos.aforo_ingreso
+select (fecha_ingreso - interval '7 day') as fecha_ingreso, conteo
+from hechos.aforo_ingreso
+where date_trunc('day', fecha_ingreso) between TO_DATE('20230309','YYYYMMDD') and TO_DATE('20230309','YYYYMMDD')
+order by 1 --desc
+;
 
-*/
 
-select * from hechos.aforo_ingreso order by 1 desc;
 
-select * from hechos.aforo_salida order by 1 desc;
+
+select * 
+from hechos.aforo_salida 
+where date_trunc('day', fecha_salida) between TO_DATE('20230302','YYYYMMDD') and TO_DATE('20230302','YYYYMMDD')
+;
+
+delete
+from hechos.aforo_salida 
+where date_trunc('day', fecha_salida) between TO_DATE('20230302','YYYYMMDD') and TO_DATE('20230302','YYYYMMDD')
+;
+
+INSERT INTO hechos.aforo_salida
+select (fecha_salida - interval '7 day') as fecha_salida, conteo
+from hechos.aforo_salida
+where date_trunc('day', fecha_salida) between TO_DATE('20230309','YYYYMMDD') and TO_DATE('20230309','YYYYMMDD')
+order by 1
+;
+
+
+ALTER TABLE hechos.aforo_ingreso ENABLE TRIGGER trigger_conteo_ingreso;
+ALTER TABLE hechos.aforo_salida ENABLE TRIGGER trigger_conteo_salida;
+
+
+/***************************************** MAQUILLAR AFORO ******************************************/
+
+
+
 
 select sum(conteo) from hechos.aforo_ingreso where fecha_ingreso >= CURRENT_DATE;
 
 select sum(conteo) from hechos.aforo_salida where fecha_salida >= CURRENT_DATE;
-
-
-
-
 
