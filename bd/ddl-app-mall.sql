@@ -140,7 +140,7 @@ AS SELECT barrio.id_barrio AS id_neighborhood, barrio.nombre_bar AS neighborhood
 commit;  
 
 
--- DATOS BASICOS DEL SISTEMA
+-- DATOS BASICOS DEL SISTEMA MOVIL
 INSERT INTO appmall.configuration_images (description,value,type) VALUES
 	 ('url imagen sorteos','https://drive.google.com/uc?id=1qUDBSVMpzdDvplwkw43k2sPzU50PGb9g', 'raffles'),
 	 ('url imagen banner 1','https://drive.google.com/uc?id=1xMQkLbEUjHkxbdJI6k137fma9sBWnb9t', 'banner'),
