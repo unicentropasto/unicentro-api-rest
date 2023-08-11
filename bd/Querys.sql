@@ -113,7 +113,7 @@ inner join sisbol.detalle_bol db on b.codi_bol = db.codi_bol
 inner join sisbol.campania c on b.id_camp = c.id_camp
 where 1=1
 and b.id_camp = (select max(c.id_camp) FROM sisbol.campania c where c.estado_camp = 'C')
-and b.codi_cli = '222'
+and b.codi_cli = '292'
 group by c.nombre_camp
 ;
 
@@ -127,33 +127,37 @@ inner join sisbol.boleta b on b.codi_bol = c.codi_bol
 inner join sisbol.tipo t ON t.codi_tip = c.loca_com
 where 1=1
 and b.id_camp = (select max(c.id_camp) FROM sisbol.campania c where c.estado_camp = 'C')
-and b.codi_cli = 33
+and b.codi_cli = 292
 group by t.desc_tip
 ;
 
 
 
 
-
+test_user@ccunicentropasto.com
 
 select * 
 from sisbol.cliente c
+where c.codi_cli = '292'
 order by 1
 ;
 
-select * 
+select b.codi_cli, count(1) 
 from sisbol.boleta b
-where b.codi_cli = '222'
+where 1=1
+--and b.codi_cli = '292'
+and b.id_camp = (select max(c.id_camp) FROM sisbol.campania c where c.estado_camp = 'C')
+group by b.codi_cli having count(1) > 3
 ;
 
 select * 
 from sisbol.detalle_bol db
-where db.codi_bol in (select b.codi_bol from sisbol.boleta b where b.codi_cli = '222')
+where db.codi_bol in (select b.codi_bol from sisbol.boleta b where b.codi_cli = '292')
 ;
 
 select * 
 from sisbol.compra c
-where c.codi_bol in (select b.codi_bol from sisbol.boleta b where b.codi_cli = '222')
+where c.codi_bol in (select b.codi_bol from sisbol.boleta b where b.codi_cli = '292')
 ;
 
 
