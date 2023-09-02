@@ -164,5 +164,19 @@ public class CustomerRestController
       return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+
+  /**
+   * Método que permite eliminar la cuenta del cliente de la aplicación de manera lógica, no es un borrado físico en la bd
+   * @param headerAuthorization Contiene el token
+   * @return true si la eliminación lógica fue exitosa, en caso contrario false
+   */
+  @PutMapping(value = "/delete/accounts")
+  public ResponseEntity<Map<String, Object>> deleteAccount(@RequestHeader("Authorization") String headerAuthorization)
+  {
+    Map<String, Object> mapResponse = processCustomer.deleteAccount(headerAuthorization);
+  
+    return new ResponseEntity<Map<String, Object>>(mapResponse, HttpStatus.OK);
+  }
 }
 

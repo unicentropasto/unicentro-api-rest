@@ -78,6 +78,7 @@ public class ProcessCustomer
       else
       {
         customer.setIdCustomer(customerBD.getIdCustomer());
+        customer.setCustomerType(customerBD.getCustomerType() + "-" + customer.getCustomerType());
 
         // Si el cliente esta en sisbol y su correo de sisbol es diferente al que esta ingresando, entonces validamos que no exita el nuevo correo en el sistema
         if(!customer.getEmail().equals(customerBD.getEmail()))
@@ -179,7 +180,7 @@ public class ProcessCustomer
    * @param customer Clienta a actualizar
    * @return true si el cliente fue actualizado correctamente, en caso contrario false
    */
-  public  Map<String, Object> updateCustomer(Customer customer, String headerAuthorization)
+  public Map<String, Object> updateCustomer(Customer customer, String headerAuthorization)
   {
     Map<String, Object> mapResponse = new HashMap<>();
     boolean isExistEmail = false;
@@ -250,7 +251,15 @@ public class ProcessCustomer
       if(null != idCustomer)
       {
         customer.setIdCustomer(idCustomer);
-        customer.setPassword(bcrypt.encode(customer.getPassword()));
+
+        if(null == customer.getPassword())
+        {
+          customer.setPassword(null);
+        }
+        else
+        {
+          customer.setPassword(bcrypt.encode(customer.getPassword()));
+        }
           
         customerService.updatePasswordCustomer(customer);
         
@@ -423,5 +432,27 @@ public class ProcessCustomer
     System.out.println(response.toString());
 
     return (null != response) ? true : false;
+  }
+
+
+  /**
+   * Método que permite eliminar la cuenta del cliente de la aplicación de manera lógica, no es un borrado físico en la bd
+   * @param headerAuthorization Contiene el token
+   * @return true si la eliminación lógica fue exitosa, en caso contrario false
+   */
+  public Map<String, Object> deleteAccount(String headerAuthorization)
+  { 
+    Map<String, Object> mapResponse = new HashMap<>();
+
+    try
+    {
+        return updatePasswordCustomer(new Customer(), headerAuthorization);
+    }
+    catch (Exception e) 
+    {
+      mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_ERROR_CODE);
+      
+      return mapResponse;
+    }
   }
 }

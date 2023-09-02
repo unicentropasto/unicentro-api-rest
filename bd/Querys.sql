@@ -10,6 +10,7 @@ order by name
 
 select * 
 FROM sisbol.barrio ba
+--where id_barrio = 561
 order by 1
 ;
 
@@ -113,7 +114,7 @@ inner join sisbol.detalle_bol db on b.codi_bol = db.codi_bol
 inner join sisbol.campania c on b.id_camp = c.id_camp
 where 1=1
 and b.id_camp = (select max(c.id_camp) FROM sisbol.campania c where c.estado_camp = 'C')
-and b.codi_cli = '292'
+and b.codi_cli = '221'
 group by c.nombre_camp
 ;
 
@@ -127,7 +128,7 @@ inner join sisbol.boleta b on b.codi_bol = c.codi_bol
 inner join sisbol.tipo t ON t.codi_tip = c.loca_com
 where 1=1
 and b.id_camp = (select max(c.id_camp) FROM sisbol.campania c where c.estado_camp = 'C')
-and b.codi_cli = 292
+and b.codi_cli = 221
 group by t.desc_tip
 ;
 
@@ -136,28 +137,33 @@ group by t.desc_tip
 
 test_user@ccunicentropasto.com
 
+$2a$10$3Dn.EDsx5fQ.Q.lwH53kje.Qz0w7PXs9nzwCU8aO1IlqRoRBBAJGW
+
 select * 
 from sisbol.cliente c
-where c.codi_cli = '292'
-order by 1
+where 1=1
+and c.codi_cli = '221'
+--or c.nrod_cli = '13072207'
+--and customer_type is null
+order by 1 desc
 ;
 
 select b.codi_cli, count(1) 
 from sisbol.boleta b
 where 1=1
---and b.codi_cli = '292'
+and b.codi_cli = '221'
 and b.id_camp = (select max(c.id_camp) FROM sisbol.campania c where c.estado_camp = 'C')
 group by b.codi_cli having count(1) > 3
 ;
 
 select * 
 from sisbol.detalle_bol db
-where db.codi_bol in (select b.codi_bol from sisbol.boleta b where b.codi_cli = '292')
+where db.codi_bol in (select b.codi_bol from sisbol.boleta b where b.codi_cli = '221')
 ;
 
 select * 
 from sisbol.compra c
-where c.codi_bol in (select b.codi_bol from sisbol.boleta b where b.codi_cli = '292')
+where c.codi_bol in (select b.codi_bol from sisbol.boleta b where b.codi_cli = '221')
 ;
 
 
@@ -227,4 +233,17 @@ ALTER TABLE hechos.aforo_salida ENABLE TRIGGER trigger_conteo_salida;
 select sum(conteo) from hechos.aforo_ingreso where fecha_ingreso >= CURRENT_DATE;
 
 select sum(conteo) from hechos.aforo_salida where fecha_salida >= CURRENT_DATE;
+
+
+
+
+2.3.3 Performance: Accurate Metadata [OK] (pantallazos)
+
+4.2.2 Design: Minimum Functionality [OK] (enlaces de internet y no es llamativa para apple)
+
+Guideline 5.1.1(v) - Data Collection and storage [OK] (eliminar cuenta)
+
+5.1.1 Legal: Privacy - Data Collection and storage [OK] (quitar campos obligatorios relevantes)
+
+
 
