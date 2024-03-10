@@ -148,3 +148,83 @@ and cast(tabla.fecha_ingreso as Date) BETWEEN cast(GETDATE()-315 as Date) and ca
 
 
 SELECT cast(GETDATE()-315 as Date), cast(GETDATE()-288 as Date);
+
+
+
+
+/****************************** 	QUERYS QLIK       *******************************/
+
+SELECT 
+0 as cantidad,
+null as punto_pago, 
+t.TransactionDate as fecha_ingreso,
+null as fecha_egreso,
+DATEDIFF (HOUR, t.TransactionDate , GETDATE()) as horas,
+DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) as minutos, 
+0 valor,
+case 
+	when (tv.ValueName  = 'Plate') or (tv.ValueName = 'VehicleType' and tv.Value = '1') then 'Carros'
+	when (tv.ValueName = 'VehicleType' and tv.Value = '2') then 'Motos'
+else 'Bicicletas' end 
+as tipos_vehiculo,
+case when tv.Value IN ('1','2') then '' ELSE tv.Value end
+as vehiculo,
+case when DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 60 then 1 when (DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) > 60 and DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 120) then 2 when (DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) > 120 and DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 180) then 3 when (DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) > 180 and DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 240) then 4 else 5 end as rango
+from CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK)
+inner join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_Transaction
+where 0 = 
+(
+	SELECT count(1)
+	FROM CI_ControlAccessDb_New.dbo.Tb_Transaction t_temp WITH (NOLOCK)
+    where t_temp.Id_TransactionParent = t.Id_TransactionParent and t_temp.Id_Transaction != t.Id_TransactionParent
+    --where t_temp.Id_TransactionParent = t.Id_Transaction or (t_temp.Id_Transaction = t.Id_Transaction and t_temp.Id_TransactionParent is not null) era la forma vieja para darme cuenta cuando el vehiculo no tenia facturacion
+)
+and tv.Id_TransactionValue = 
+(
+	SELECT max(tv_temp.Id_TransactionValue)
+	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
+	where tv_temp.Id_Transaction = tv.Id_Transaction
+)
+and cast(t.TransactionDate as Date) = cast(GETDATE() as Date)
+UNION
+SELECT 
+b.Id_Billing as cantidad,
+b.Prefix as punto_pago, 
+DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) as fecha_ingreso,
+b.InvoiceDate as fecha_egreso,
+case when 0 != b.MinutesBilled then (b.MinutesBilled / 60) else 0 end as horas,
+b.MinutesBilled as minutos, 
+case b.Total when 0 then b.TotalAgreements ELSE b.Total end as valor,
+case 
+	when (b.Receipt like '%Carro%') then 'Carros'
+	when (b.Receipt like '%Moto%') then 'Motos'
+	when (b.Receipt like '%Bicicleta%') then 'Bicicletas'
+	when 'CARROS' = tz.Name then 'Carros' 
+else tz.Name end 
+as tipos_vehiculo,
+case when '' != b.Receipt and 0 != charindex('\nEntrada', b.Receipt) then
+	case when '' != TRIM(SUBSTRING(b.Receipt, charindex('Placa', b.Receipt)+6, (charindex('\nEntrada', b.Receipt)-charindex('Placa', b.Receipt))-6)) then 
+		TRIM(SUBSTRING(b.Receipt, charindex('Placa', b.Receipt)+6, (charindex('\nEntrada', b.Receipt)-charindex('Placa', b.Receipt))-6))
+	else
+		case when tv.Value IN ('1','2') then 
+			'' 
+		else 
+			tv.Value 
+		end 
+	end
+else 
+	''
+end as vehiculo,
+case when b.MinutesBilled <= 60 then 1 when (b.MinutesBilled > 60 and b.MinutesBilled <= 120) then 2 when (b.MinutesBilled > 120 and b.MinutesBilled <= 180) then 3 when (b.MinutesBilled > 180 and b.MinutesBilled <= 240) then 4 else 5 end as rango
+from CI_ControlAccessDb_New.dbo.Tb_Billing b WITH (NOLOCK)
+inner join CI_ControlAccessDb_New.dbo.Tb_Zone tz WITH (NOLOCK) on tz.Id_Zone = b.Id_Zone
+left join CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK) on t.Id_Transaction = b.Id_Transaction
+left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_TransactionParent 
+and tv.Id_TransactionValue = 
+(
+	SELECT max(tv_temp.Id_TransactionValue)
+	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
+	where tv_temp.Id_Transaction = tv.Id_Transaction 
+)
+where DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) >= '2023-11-01 00:00:00.000' --Trae los ultimos dos meses
+;

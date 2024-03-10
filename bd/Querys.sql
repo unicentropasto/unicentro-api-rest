@@ -247,3 +247,185 @@ Guideline 5.1.1(v) - Data Collection and storage [OK] (eliminar cuenta)
 
 
 
+
+
+/******************************************************* QLIK 2024 ******************************************************************/
+
+/*
+SELECT 
+0 as cantidad,
+null as punto_pago, 
+t.TransactionDate as fecha_ingreso,
+null as fecha_egreso,
+DATEDIFF (HOUR, t.TransactionDate , GETDATE()) as horas,
+DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) as minutos, 
+0 valor,
+case 
+	when (tv.ValueName  = 'Plate') or (tv.ValueName = 'VehicleType' and tv.Value = '1') then 'Carros'
+	when (tv.ValueName = 'VehicleType' and tv.Value = '2') then 'Motos'
+else 'Bicicletas' end 
+as tipos_vehiculo,
+case when tv.Value IN ('1','2') then '' ELSE tv.Value end
+as vehiculo,
+case when DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 60 then 1 when (DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) > 60 and DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 120) then 2 when (DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) > 120 and DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 180) then 3 when (DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) > 180 and DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 240) then 4 else 5 end as rango
+from CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK)
+inner join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_Transaction
+where 0 = 
+(
+	SELECT count(1)
+	FROM CI_ControlAccessDb_New.dbo.Tb_Transaction t_temp WITH (NOLOCK)
+    where t_temp.Id_TransactionParent = t.Id_TransactionParent and t_temp.Id_Transaction != t.Id_TransactionParent
+    --where t_temp.Id_TransactionParent = t.Id_Transaction or (t_temp.Id_Transaction = t.Id_Transaction and t_temp.Id_TransactionParent is not null) era la forma vieja para darme cuenta cuando el vehiculo no tenia facturacion
+)
+and tv.Id_TransactionValue = 
+(
+	SELECT max(tv_temp.Id_TransactionValue)
+	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
+	where tv_temp.Id_Transaction = tv.Id_Transaction
+)
+and cast(t.TransactionDate as Date) = cast(GETDATE() as Date)
+UNION*/
+SELECT 
+b.Id_Billing as cantidad,
+b.Prefix as punto_pago, 
+DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) as fecha_ingreso,
+b.InvoiceDate as fecha_egreso,
+case when 0 != b.MinutesBilled then (b.MinutesBilled / 60) else 0 end as horas,
+b.MinutesBilled as minutos, 
+case b.Total when 0 then b.TotalAgreements ELSE b.Total end as valor,
+case 
+	when (b.Receipt like '%Carro%') then 'Carros'
+	when (b.Receipt like '%Moto%') then 'Motos'
+	when (b.Receipt like '%Bicicleta%') then 'Bicicletas'
+	when 'CARROS' = tz.Name then 'Carros' 
+else tz.Name end 
+as tipos_vehiculo,
+case when '' != b.Receipt and 0 != charindex('\nEntrada', b.Receipt) then
+	case when '' != TRIM(SUBSTRING(b.Receipt, charindex('Placa', b.Receipt)+6, (charindex('\nEntrada', b.Receipt)-charindex('Placa', b.Receipt))-6)) then 
+		TRIM(SUBSTRING(b.Receipt, charindex('Placa', b.Receipt)+6, (charindex('\nEntrada', b.Receipt)-charindex('Placa', b.Receipt))-6))
+	else
+		case when tv.Value IN ('1','2') then 
+			'' 
+		else 
+			tv.Value 
+		end 
+	end
+else 
+	''
+end as vehiculo,
+case when b.MinutesBilled <= 60 then 1 when (b.MinutesBilled > 60 and b.MinutesBilled <= 120) then 2 when (b.MinutesBilled > 120 and b.MinutesBilled <= 180) then 3 when (b.MinutesBilled > 180 and b.MinutesBilled <= 240) then 4 else 5 end as rango
+from CI_ControlAccessDb_New.dbo.Tb_Billing b WITH (NOLOCK)
+inner join CI_ControlAccessDb_New.dbo.Tb_Zone tz WITH (NOLOCK) on tz.Id_Zone = b.Id_Zone
+left join CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK) on t.Id_Transaction = b.Id_Transaction
+left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_TransactionParent 
+and tv.Id_TransactionValue = 
+(
+	SELECT max(tv_temp.Id_TransactionValue)
+	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
+	where tv_temp.Id_Transaction = tv.Id_Transaction 
+)
+where DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) >= '2023-11-01 00:00:00.000' //Trae los ultimos dos meses
+;
+
+
+
+
+SELECT 
+--convert(varchar, b.InvoiceDate, 23), count(1) 
+b.*, tz.Name, tv.Value, tv.Id_TransactionValue
+from CI_ControlAccessDb_New.dbo.Tb_Billing b WITH (NOLOCK)
+left join CI_ControlAccessDb_New.dbo.Tb_Zone tz WITH (NOLOCK) on tz.Id_Zone = b.Id_Zone
+left join CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK) on t.Id_Transaction = b.Id_Transaction
+left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_TransactionParent 
+and tv.Id_TransactionValue = 
+(
+	SELECT max(tv_temp.Id_TransactionValue)
+	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
+	where tv_temp.Id_Transaction = tv.Id_Transaction 
+	and tv_temp.Value NOT IN ('1','2')
+)
+where 1=1
+and b.IdInvoice in (491358)
+--and b.Id_Billing != 1673113333958
+--and DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) BETWEEN '2024-01-01 00:00:00.000' and '2024-01-01 23:59:00.000'
+--and b.InvoiceDate BETWEEN '2024-01-03 00:00:00.000' and '2024-01-03 23:59:00.000'
+--and b.Receipt like '%GCS827%'
+--and tv.Value = 'GCS827'
+--and b.SubTotal = 600
+--order by b.IdInvoice
+--GROUP by convert(varchar, b.InvoiceDate, 23)
+;
+
+
+
+
+SELECT COUNT(1)
+--b.*, tv.Value, tv.Id_TransactionValue
+--, case when (b.Name is null and b.TotalAgreements = 3300) then 'Motos' when (b.Name is null and b.TotalAgreements = 4500) then 'Carros' else b.Name end as Tarifa
+--, case when (ag.Id_Agreement = 1) then 'Cinemark' when (ag.Id_Agreement = 3) then 'Jumbo' else 'colocar convenio' end as convenio
+--convert(varchar, b.InvoiceDate, 23) dia, count(1) cantidad
+from CI_ControlAccessDb_New.dbo.temp_billing b
+left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = b.Id_TransactionParent 
+and tv.Id_TransactionValue = 
+(
+	SELECT max(tv_temp.Id_TransactionValue)
+	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
+	where tv_temp.Id_Transaction = tv.Id_Transaction 
+	and tv_temp.Value NOT IN ('1','2')
+)
+--left join CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied ag WITH (NOLOCK) on ag.Id_Billing = b.Id_Billing --incluye repetidos para convenio
+where 1=1
+--and b.Id_Billing = 221704243247
+--and b.IdInvoice in (66478)
+and b.InvoiceDate BETWEEN '2024-01-01 00:00:00.000' and '2024-01-31 23:59:00.000' 
+--and b.Total = 4500 --600 -- en qlik filtro por valor actual del parqueadero según vehículo
+--and b.Total not in (0, 4500, 600, 3300) -- pergnotado
+--and b.Total = 0 -- en qlik filtro para convenios
+--and (b.Name <> 'Carros' or b.Name is null) and b.Receipt like '%Moto%' and b.Prefix <> 'OAV1' -- en qlik filtro para convenios
+--and (b.Name <> 'Motos' or b.Name is null) and b.Receipt like '%Carro%' and b.Prefix <> 'OAV1' -- en qlik filtro para convenios
+--and EXISTS (SELECT 1 from CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied where Id_Billing = b.Id_Billing) -- en qlik filtro para convenios
+--group by convert(varchar, b.InvoiceDate, 23)
+order by 1 
+--order by b.IdInvoice
+;
+
+
+-- si select tv.Value = 4 entonces debo colocar bicicleta
+
+
+
+
+SELECT * from CI_ControlAccessDb_New.dbo.Tb_Zone tz
+;
+
+SELECT DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) as fecha_ingreso, b.*
+from CI_ControlAccessDb_New.dbo.Tb_Billing b 
+where 1=1
+--and b.Id_Billing in (191704153401)
+and b.IdInvoice in (1848809)
+--and b.SubTotal = 600
+;
+
+
+
+SELECT * from CI_ControlAccessDb_New.dbo.Tb_Transaction where Id_Transaction = '4-757514592'
+;
+
+SELECT * from CI_ControlAccessDb_New.dbo.Tb_TransactionValues where Id_Transaction = '2-757494233' order by 1
+;
+
+
+SELECT * from CI_ControlAccessDb_New.dbo.Tb_BillingItem
+where Id_Billing = 211704219462
+;
+
+SELECT * from CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied
+where Id_Billing = 211704219462
+;
+
+
+SELECT * from CI_ControlAccessDb.dbo.Tb_Agreement;
+
+SELECT * from CI_ControlAccessDb.dbo.Tb_Zone tz;
+SELECT * from CI_ControlAccessDb_New.dbo.Tb_Zone tz;
+
