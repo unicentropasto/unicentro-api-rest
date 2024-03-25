@@ -29,7 +29,7 @@ public class StoreController
    * 
    * 1. Si no carga lo primero eliminar el archivo /Users/luisa/Trabajo_Ivan/Proyectos/unicentro/unicentro-api-rest-mall/tokens/StoredCredential
    * 
-   * 2. Se vuelve a levantar el backend para obtener en la consola el link para authenticar con google y despues de loguearno a google el back crea automaticamente este archivo
+   * 2. Se vuelve a levantar el backend para obtener en la consola el link para authenticar con google y despues de loguearnos a google el back crea automaticamente este archivo
    * 
    * 3. Validar si el excel tiene 13 columnas o tiene filas vacias al final del excel
    * @return Listado de categorias con tiendas

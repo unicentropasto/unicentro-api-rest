@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
@@ -14,11 +16,7 @@ import com.ihc.apirest.models.Customer;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-// import io.jsonwebtoken.ExpiredJwtException;
-// import io.jsonwebtoken.MalformedJwtException;
-// import io.jsonwebtoken.SignatureException;
-// import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.Keys;
 
 
 
@@ -47,16 +45,15 @@ public class ProcessToken
 
     try
     {
+      String token = Jwts.builder()
+                        .subject(customer.getIdentificationDocument())
+                        .expiration(new Date(new Date().getTime() + expiration * 1000))
+                        .claims(params)
+                        .issuedAt(new Date())
+                        .signWith(key(), Jwts.SIG.HS256)
+                        .compact();
 
-      return Jwts.builder()
-                  .setSubject(customer.getIdentificationDocument())
-                  // .setExpiration(new Date(60000))
-                  .setExpiration(new Date(new Date().getTime() + expiration * 1000))
-                  .addClaims(params)
-                  .setIssuedAt(new Date())
-                  // .setExpiration(new Date(System.currentTimeMillis() + 10000))
-                  .signWith(SignatureAlgorithm.HS512, secretKey)
-                  .compact();
+      return token;
     }
     catch(JwtException e)
     {
@@ -75,12 +72,12 @@ public class ProcessToken
   {
     try
     {
-      Claims claims = Jwts.parser()
-                          .setSigningKey(secretKey)
-                          .parseClaimsJws(token)
-                          .getBody();
-      
-      String identificationDocument = claims.getSubject();
+      String identificationDocument = Jwts.parser()
+                                          .verifyWith(key())
+                                          .build()
+                                          .parseSignedClaims(token)
+                                          .getPayload()
+                                          .getSubject();
 
       return new UsernamePasswordAuthenticationToken(identificationDocument, null, Collections.emptyList());
     }
@@ -155,7 +152,14 @@ public class ProcessToken
 
     try
     {
-      return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+      String identificationDocument = Jwts.parser()
+                                          .verifyWith((SecretKey) key())
+                                          .build()
+                                          .parseSignedClaims(token)
+                                          .getPayload()
+                                          .getSubject();
+      
+      return identificationDocument;
     }
     catch(JwtException e)
     {
@@ -176,9 +180,10 @@ public class ProcessToken
       String token = getToken(headerAuthorization);
 
       Claims claims = Jwts.parser()
-                          .setSigningKey(secretKey)
-                          .parseClaimsJws(token)
-                          .getBody();
+                          .verifyWith((SecretKey) key())
+                          .build()
+                          .parseSignedClaims(token)
+                          .getPayload();
 
       return Long.parseLong(claims.get("idCustomer").toString());
     }
@@ -186,5 +191,16 @@ public class ProcessToken
     {
       return null;
     }
+  }
+
+
+
+  /**
+   * Método que permite convertir el secretKey en bytes
+   * @return El secretJey en bythes
+   */
+  private SecretKey key()
+  {
+      return Keys.hmacShaKeyFor(secretKey.getBytes());
   }
 }

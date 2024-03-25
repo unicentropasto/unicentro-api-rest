@@ -23,6 +23,12 @@ and nrod_cli in ('13072207','1107034509')
 --group by emai_cli having count(1) > 3
 ;
 
+
+delete FROM sisbol.cliente
+where 1=1
+and nrod_cli in ('13072207')
+;
+
 uc?id=
 
 https://drive.google.com/uc?id=1OgpNidwbdCDZB3d4yGL7oQgyRdsOL3VH
@@ -329,7 +335,7 @@ where DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) >= '2023-11-01 00:00:00.0
 
 
 
-
+--query create table CI_ControlAccessDb_New.dbo.temp_billing
 SELECT 
 --convert(varchar, b.InvoiceDate, 23), count(1) 
 b.*, tz.Name, tv.Value, tv.Id_TransactionValue
@@ -359,11 +365,13 @@ and b.IdInvoice in (491358)
 
 
 
-SELECT COUNT(1)
---b.*, tv.Value, tv.Id_TransactionValue
---, case when (b.Name is null and b.TotalAgreements = 3300) then 'Motos' when (b.Name is null and b.TotalAgreements = 4500) then 'Carros' else b.Name end as Tarifa
---, case when (ag.Id_Agreement = 1) then 'Cinemark' when (ag.Id_Agreement = 3) then 'Jumbo' else 'colocar convenio' end as convenio
---convert(varchar, b.InvoiceDate, 23) dia, count(1) cantidad
+SELECT DISTINCT
+b.*, tv.Value, tv.Id_TransactionValue
+, case when (b.Name is null and b.TotalAgreements = 3300) then 'Motos' when (b.Name is null and b.TotalAgreements = 4500 or b.Name is null and b.Total in(4500)) then 'Carros' 
+when (b.Total in (600,1200,3600)) then 'Bicicletas' else b.Name end as tipos_vehiculo
+--, case when (ag.Id_Agreement = 1) then 'Cinemark' when (ag.Id_Agreement = 3) then 'Jumbo' when (ag.Id_Agreement = 4) then 'Empleados y Domiciliarios' when (ag.Id_Agreement = 7) then 'Empleados Jumbo' else 'colocar convenio' end as convenio
+--convert(varchar, b.InvoiceDate, 23) dia
+--, count(1) duplicadas
 from CI_ControlAccessDb_New.dbo.temp_billing b
 left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = b.Id_TransactionParent 
 and tv.Id_TransactionValue = 
@@ -373,24 +381,29 @@ and tv.Id_TransactionValue =
 	where tv_temp.Id_Transaction = tv.Id_Transaction 
 	and tv_temp.Value NOT IN ('1','2')
 )
---left join CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied ag WITH (NOLOCK) on ag.Id_Billing = b.Id_Billing --incluye repetidos para convenio
+left join CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied ag WITH (NOLOCK) on ag.Id_Billing = b.Id_Billing --incluye repetidos para convenio
 where 1=1
 --and b.Id_Billing = 221704243247
---and b.IdInvoice in (66478)
+--and b.IdInvoice in (1848809)
 and b.InvoiceDate BETWEEN '2024-01-01 00:00:00.000' and '2024-01-31 23:59:00.000' 
---and b.Total = 4500 --600 -- en qlik filtro por valor actual del parqueadero según vehículo
+and b.Total = 3300 --4500 --600 -- en qlik filtro por valor actual del parqueadero según vehículo
 --and b.Total not in (0, 4500, 600, 3300) -- pergnotado
 --and b.Total = 0 -- en qlik filtro para convenios
---and (b.Name <> 'Carros' or b.Name is null) and b.Receipt like '%Moto%' and b.Prefix <> 'OAV1' -- en qlik filtro para convenios
---and (b.Name <> 'Motos' or b.Name is null) and b.Receipt like '%Carro%' and b.Prefix <> 'OAV1' -- en qlik filtro para convenios
+--and (b.Name <> 'Carros' or b.Name is null) and b.Receipt like '%Moto%' and b.Prefix <> 'OAV1' -- en qlik filtro para convenios activar cuando busque motos
+--and (b.Name <> 'Motos' or b.Name is null) and b.Receipt like '%Carro%' and b.Prefix <> 'OAV1' -- en qlik filtro para convenios activar cuando busque carros
 --and EXISTS (SELECT 1 from CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied where Id_Billing = b.Id_Billing) -- en qlik filtro para convenios
 --group by convert(varchar, b.InvoiceDate, 23)
-order by 1 
---order by b.IdInvoice
+--order by 2 asc
+order by b.IdInvoice asc
+--GROUP by 
 ;
 
+--NOTA: el query base solo tiene q tener el where b.InvoiceDate BETWEEN '2024-01-01 00:00:00.000' and '2024-01-31 23:59:00.000'
+-- los otros filtros deben aplicarse en qlik para obtener la data segun su categoria (convenios motos, carros, bicis y ciudadano de a pie moto, carro y bici)
 
--- si select tv.Value = 4 entonces debo colocar bicicleta
+--NOTA: el tipos_vehiculo se debe colocar de acuerdo al b.Total si es 4500 carro si es 3300 moto y si es 600 bici
+
+-- hay q sentarse hacer en qlik la tabla por tipos_vehiculo, convenios y pergnotados
 
 
 
@@ -401,8 +414,8 @@ SELECT * from CI_ControlAccessDb_New.dbo.Tb_Zone tz
 SELECT DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) as fecha_ingreso, b.*
 from CI_ControlAccessDb_New.dbo.Tb_Billing b 
 where 1=1
---and b.Id_Billing in (191704153401)
-and b.IdInvoice in (1848809)
+and b.Id_Billing in (191706232230)
+--and b.IdInvoice in (491468)
 --and b.SubTotal = 600
 ;
 

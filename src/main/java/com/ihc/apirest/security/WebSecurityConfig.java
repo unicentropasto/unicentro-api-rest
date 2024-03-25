@@ -4,7 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +19,8 @@ import lombok.AllArgsConstructor;
 
 @Configuration
 @AllArgsConstructor
+@EnableWebSecurity
+@EnableMethodSecurity
 public class WebSecurityConfig
 {
   private final UserDetailsService userDetailsService;
@@ -24,57 +29,50 @@ public class WebSecurityConfig
 
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception 
+  public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception 
   {
-    // JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
-    // jwtAuthenticationFilter.setAuthenticationManager(authManager);
-    // jwtAuthenticationFilter.setFilterProcessesUrl("/v1/customers/validations/tokens");
 
-    http
-        .cors()
-        .and()
-        .csrf().disable()
-        .authorizeRequests()
-        .antMatchers("/customers/signup").permitAll()
-        .antMatchers("/customers/signin").permitAll()
-        .antMatchers("/customers/restores").permitAll()
-        .antMatchers("/categories").permitAll()
-        .antMatchers("/menuoptions/{idRole}").permitAll()
-        .antMatchers("/promotions/loads").permitAll()
-        .antMatchers("/promotions").permitAll()
-        .antMatchers("/identificationstype").permitAll()
-        .antMatchers("/neighborhoods").permitAll()
-        .antMatchers("/stores/loads").permitAll()
-        .antMatchers("/aforos/maximos").permitAll()
-        .antMatchers("/aforos/ingresos").permitAll()
-        .antMatchers("/aforos/salidas").permitAll()
-        .antMatchers("/configurations/images/types/{type}").permitAll()
-        .antMatchers("/configurations/images/loads").permitAll()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        // .addFilter(jwtAuthenticationFilter)
-        .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-    ;
+    http.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable);
 
+    http.authorizeHttpRequests(auth -> auth
+                                            .requestMatchers("/customers/signup").permitAll()
+                                            .requestMatchers("/customers/signin").permitAll()
+                                            .requestMatchers("/customers/restores").permitAll()
+                                            .requestMatchers("/categories").permitAll()
+                                            .requestMatchers("/menuoptions/{idRole}").permitAll()
+                                            .requestMatchers("/promotions/loads").permitAll()
+                                            .requestMatchers("/promotions").permitAll()
+                                            .requestMatchers("/identificationstype").permitAll()
+                                            .requestMatchers("/neighborhoods").permitAll()
+                                            .requestMatchers("/stores/loads").permitAll()
+                                            .requestMatchers("/aforos/maximos").permitAll()
+                                            .requestMatchers("/aforos/ingresos").permitAll()
+                                            .requestMatchers("/aforos/salidas").permitAll()
+                                            .requestMatchers("/configurations/images/types/{type}").permitAll()
+                                            .requestMatchers("/configurations/images/loads").permitAll()
+                                            .anyRequest()
+                                            .authenticated()
+                              );
+        // .authenticationManager(authenticationManager)
+    // ;
+
+    http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    // http.exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPointJwt));
+    http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+    
     return http.build();
   }
 
 
   @Bean
-  AuthenticationManager authManager(HttpSecurity http) throws Exception
+  public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception 
   {
-    return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder())
-                .and()
-                .build();
+    AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+    authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    return authenticationManagerBuilder.build();
   }
 
-
+  
   @Bean
 	public BCryptPasswordEncoder passwordEncoder() 
 	{

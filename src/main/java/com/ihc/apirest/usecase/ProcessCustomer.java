@@ -252,11 +252,7 @@ public class ProcessCustomer
       {
         customer.setIdCustomer(idCustomer);
 
-        if(null == customer.getPassword())
-        {
-          customer.setPassword(null);
-        }
-        else
+        if(null != customer.getPassword())
         {
           customer.setPassword(bcrypt.encode(customer.getPassword()));
         }

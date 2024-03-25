@@ -168,6 +168,7 @@ public class CustomerRestController
 
   /**
    * Método que permite eliminar la cuenta del cliente de la aplicación de manera lógica, no es un borrado físico en la bd
+   * simplemente se hace un set del password en null para que no pueda loguearse más
    * @param headerAuthorization Contiene el token
    * @return true si la eliminación lógica fue exitosa, en caso contrario false
    */
