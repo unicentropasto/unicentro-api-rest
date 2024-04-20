@@ -22,36 +22,39 @@ public class CloudinaryRepository implements CloudinaryService
   private Cloudinary cloudinary;
 
 
+
+  /**
+   * Método que permite cargar imagenes al repositorio
+   * @param imageName Nombre de la imagene a cargar
+   * @return URL puplico de la imagen cargada, en caso contrario devuelve un mensaje indicando que no se pudo cargar
+   */
   @Override
   public String loadImage(String imageName) throws Exception 
   {
     File file = null;
     String imageUrl = null;
     
-    try 
-    {
-      file = new File("/Users/luisa/Trabajo_Ivan/Proyectos/unicentro/mockups/cloudinary/" + imageName);
 
-      // Creamos un map de opciones para la carga
-      Map<String, Object> options = new HashMap<String, Object>();
-      options.put("public_id", imageName.split("\\.")[0]);
-      options.put("overwrite", true);
-      options.put("resource_type", "image");
-      options.put("folder", "image-repository");
-  
-      Map<String, Object> result = cloudinary.uploader().upload(file, options);
-  
-      imageUrl = result.get("secure_url").toString();
-    } 
-    catch (Exception e) 
-    {
-      System.out.println("Imagen picha: " + imageName);
-    }
+    file = new File("/Volumes/Datos/Proyectos/unicentro/cloudinary/image-repository/" + imageName);
 
+    // Creamos un map de opciones para la carga
+    Map<String, Object> options = new HashMap<String, Object>();
+    options.put("public_id", imageName.split("\\.")[0]);
+    options.put("overwrite", true);
+    options.put("resource_type", "image");
+    options.put("folder", "image-repository");
+
+    Map<String, Object> result = cloudinary.uploader().upload(file, options);
+
+    imageUrl = result.get("secure_url").toString();
+    
     return imageUrl;
   }
 
 
+  /**
+   * Método que tengo que explorar
+   */
   @Override
   public Map<String, String> getAllImageUrl() throws Exception 
   {
@@ -68,5 +71,18 @@ public class CloudinaryRepository implements CloudinaryService
     }
 
     return mapImagesUrl;
+  }
+
+
+
+  /**
+   * Método que permite eliminar de forma masiva las imganes del respositorio
+   * @return Mensaje indicando si fue exitoso o no el proceso de borrado
+   */
+  @Override
+  public String deleteImage(List<String> lstImagesNames, Map<String, Object> mapParameters) throws Exception 
+  {   
+    ApiResponse apiResponse = cloudinary.api().deleteResources(lstImagesNames, mapParameters);
+    return apiResponse.toString();
   }
 }

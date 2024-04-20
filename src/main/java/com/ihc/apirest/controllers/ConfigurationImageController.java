@@ -4,13 +4,13 @@ package com.ihc.apirest.controllers;
 import com.ihc.apirest.service.CloudinaryService;
 import com.ihc.apirest.usecase.ProcessConfigurationImage;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,44 +45,27 @@ public class ConfigurationImageController
 
 
   /**
-   * Método que permite cargar imagenes de configuración a cloudinary
+   * Método que permite cargar imagenes de configuración al repositorio
    * @return Listado de imágenes cargadas
    */
   @GetMapping(value = "/loads")
-  public ResponseEntity<ArrayList<String>> loadImagesConfiguraions() 
+  public ResponseEntity<Map<String, Object>> loadImagesConfiguraions() 
   {
-    try
-    {
-      ArrayList<String> lstImages = new ArrayList<>();
-      ArrayList<String> lstImagesUrl = new ArrayList<>();
+    Map<String, Object> mapResponse = processConfigurationImage.loadImagesConfiguraions();
 
-      lstImages.add("icon-tiendas-home.png");
-      lstImages.add("icon-bancos-home.png");
-      lstImages.add("icon-comidas-home.png");
-      lstImages.add("icon-entretenimiento-home.png");
-      lstImages.add("icon-02.png");
-      lstImages.add("icon-03.png");
-      lstImages.add("icon-04.png");
-      lstImages.add("icon-05.png");
-      lstImages.add("icon-06.png");
-      lstImages.add("icon-07.png");
+    return new ResponseEntity<Map<String, Object>>(mapResponse, HttpStatus.OK);
+  }
 
-      lstImages.add("sorteos.jpg");
-      lstImages.add("banner-626x352-42.png");
-      lstImages.add("banner-626x352-43.png");
+  
+  /**
+   * Método que permite eliminar de forma masiva las imagenes del respositorio
+   * @return Mensaje indicando si fue exitoso o no el proceso de borrado
+   */
+  @DeleteMapping(value = "/deletes")
+  public ResponseEntity<Map<String, Object>> deleteImage() 
+  {
+    Map<String, Object> mapResponse = processConfigurationImage.deleteImage();
 
-      for (String imageName : lstImages) 
-      {
-        String imageUrl = cloudinaryService.loadImage(imageName);
-        System.out.println(imageUrl);
-        lstImagesUrl.add(imageUrl);
-      }
-
-      return new ResponseEntity<ArrayList<String>>(lstImagesUrl, HttpStatus.OK);
-    }
-    catch (Exception e) 
-    {
-      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return new ResponseEntity<Map<String, Object>>(mapResponse, HttpStatus.OK);
   }
 }

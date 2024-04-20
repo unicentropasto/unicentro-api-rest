@@ -45,6 +45,7 @@ public class WebSecurityConfig
                                             .requestMatchers("/identificationstype").permitAll()
                                             .requestMatchers("/neighborhoods").permitAll()
                                             .requestMatchers("/stores/loads").permitAll()
+                                            .requestMatchers("/stores/deletes").permitAll()
                                             .requestMatchers("/aforos/maximos").permitAll()
                                             .requestMatchers("/aforos/ingresos").permitAll()
                                             .requestMatchers("/aforos/salidas").permitAll()
