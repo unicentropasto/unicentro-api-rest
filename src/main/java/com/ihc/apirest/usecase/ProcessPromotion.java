@@ -72,55 +72,67 @@ public class ProcessPromotion
    * @throws GeneralSecurityException
    * @throws Exception
    */
-  public String loadPromotions() throws IOException, GeneralSecurityException, Exception
+  public Map<String, Object> loadPromotions()
   {
-    String msj = null;
-
-    List<List<String>> lstDataExcel =  googleService.loadDataFileGoogleDrive("Promociones.xlsx", "Promociones", 6);
-
-    List<Promotion> lstPromotions = new ArrayList<>();
-
-    for (List<String> lstRowExcel : lstDataExcel) 
+    Map<String, Object> mapResponse = new HashMap<>();
+    
+    try
     {
-      // La columna 10 del excel de promociones representa el nombre de la imagen que se debe buscar en el drive de google para obtener su ID
-      // File fileImage = "".equals(lstRowExcel.get(5)) ? null : googleService.getFileGoogleDrive(lstRowExcel.get(5)); // Imagen promoción
-      String fileImage = "".equals(lstRowExcel.get(5)) ? null : cloudinaryService.loadImage(lstRowExcel.get(5)); // Imagen logo
+      List<List<String>> lstDataExcel =  googleService.loadDataFileGoogleDrive("Promociones.xlsx", "Promociones", 6);
 
-      Store store = storeService.getIdStoreByStoreNumber(lstRowExcel.get(0).trim());
+      List<Promotion> lstPromotions = new ArrayList<>();
+      String msj = null;
 
-      // En caso de que se detecte que hay un número de local invalido se debe rechazar todo el archivo
-      if(null != store)
+      for (List<String> lstRowExcel : lstDataExcel) 
       {
-        Promotion promotion = new Promotion(
-            null,
-            "".equals(lstRowExcel.get(0)) ? null : store, // Id local
-            Constants.ID_STATE_ACTIVE,
-            "".equals(lstRowExcel.get(1)) ? null : lstRowExcel.get(1), // Nombre promoción
-            "".equals(lstRowExcel.get(2)) ? null : lstRowExcel.get(2), // Descripción
-            "".equals(lstRowExcel.get(3)) ? null : GenericFunctions.castNumericCell(lstRowExcel.get(3)), // Fecha inicio
-            "".equals(lstRowExcel.get(4)) ? null : GenericFunctions.castNumericCell(lstRowExcel.get(4)), // Fecha fin
-            // (null != fileImage) ? "https://drive.google.com/uc?id=" + fileImage.getId() : Constants.URL_IMAGE_DEFAULT, // Url imagen promoción
-            (null != fileImage) ? fileImage : Constants.URL_IMAGE_DEFAULT, // Url imagen promoción
-            new Date()
-        );
-  
-        lstPromotions.add(promotion);
+        // La columna 10 del excel de promociones representa el nombre de la imagen que se debe buscar en el drive de google para obtener su ID
+        // File fileImage = "".equals(lstRowExcel.get(5)) ? null : googleService.getFileGoogleDrive(lstRowExcel.get(5)); // Imagen promoción
+        String fileImage = "".equals(lstRowExcel.get(5)) ? null : cloudinaryService.loadImage(lstRowExcel.get(5)); // Imagen logo
+
+        Store store = storeService.getIdStoreByStoreNumber(lstRowExcel.get(0).trim());
+
+        // En caso de que se detecte que hay un número de local invalido se debe rechazar todo el archivo
+        if(null != store)
+        {
+          Promotion promotion = new Promotion(
+              null,
+              "".equals(lstRowExcel.get(0)) ? null : store, // Id local
+              Constants.ID_STATE_ACTIVE,
+              "".equals(lstRowExcel.get(1)) ? null : lstRowExcel.get(1), // Nombre promoción
+              "".equals(lstRowExcel.get(2)) ? null : lstRowExcel.get(2), // Descripción
+              "".equals(lstRowExcel.get(3)) ? null : GenericFunctions.castNumericCell(lstRowExcel.get(3)), // Fecha inicio
+              "".equals(lstRowExcel.get(4)) ? null : GenericFunctions.castNumericCell(lstRowExcel.get(4)), // Fecha fin
+              (null != fileImage) ? fileImage : Constants.URL_IMAGE_DEFAULT, // Url imagen promoción
+              new Date()
+          );
+    
+          lstPromotions.add(promotion);
+        }
+        else
+        {
+          msj = "El número de local [ " + lstRowExcel.get(0) + " ] es inválido, favor validar dicho número en sisbol.";
+          break;
+        }
       }
-      else
+
+      // Se valida que no exita mensajes de error al crear el listado de promociones
+      if(null == msj)
       {
-        msj = "El número de local [ " + lstRowExcel.get(0) + " ] es inválido, favor validar dicho número en sisbol.";
-        break;
+        createPromotion(lstPromotions);
+        msj = "Las promociones fueron cargadas correctamente";
       }
+
+      mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_OK_CODE);
+      mapResponse.put(Constants.RESPONSE_DATA, msj);
+
+      return mapResponse;
     }
-
-    // Se valida que no exita mensajes de error al crear el listado de promociones
-    if(null == msj)
+    catch (Exception e) 
     {
-      createPromotion(lstPromotions);
-      return "Las promociones fueron cargadas correctamente";
-    }
+      mapResponse.put(Constants.RESPONSE_CODE, "Error al cargar promociones: " + e.getMessage());
 
-    return msj;
+      return mapResponse;
+    }
   }
 
 

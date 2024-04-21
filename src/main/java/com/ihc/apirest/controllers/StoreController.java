@@ -26,7 +26,7 @@ public class StoreController
   
 
   /**
-   * Método que permite otener todas las categorias con sus tiendas
+   * Método que permite cargar las imagenes y logos de los locales
    * GUIA para correr este endpoint
    * 
    * 1. Si no carga el proyecto, entonces lo primero eliminar el archivo /Volumes/Datos/Proyectos/unicentro-api-rest/tokens/StoredCredential
@@ -34,9 +34,9 @@ public class StoreController
    * 2. Se vuelve a levantar el backend para obtener en la consola el link para authenticar con google y despues de loguearnos a google el back crea automaticamente este archivo
    * 
    * 3. Validar si el excel tiene 13 columnas o tiene filas vacias al final del excel
-   * @return Listado de categorias con tiendas
+   * @return Listado de locales
    */
-  @GetMapping(value = "/loads")
+  @GetMapping(value = "/loads/images")
   public  ResponseEntity<Map<String, Object>> loadStores() 
   {
     Map<String, Object> mapResponse = processStore.loadStores();

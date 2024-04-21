@@ -40,25 +40,18 @@ public class WebSecurityConfig
                                             .requestMatchers("/customers/restores").permitAll()
                                             .requestMatchers("/categories").permitAll()
                                             .requestMatchers("/menuoptions/{idRole}").permitAll()
-                                            .requestMatchers("/promotions/loads").permitAll()
                                             .requestMatchers("/promotions").permitAll()
                                             .requestMatchers("/identificationstype").permitAll()
                                             .requestMatchers("/neighborhoods").permitAll()
-                                            .requestMatchers("/stores/loads").permitAll()
-                                            .requestMatchers("/stores/deletes").permitAll()
                                             .requestMatchers("/aforos/maximos").permitAll()
                                             .requestMatchers("/aforos/ingresos").permitAll()
                                             .requestMatchers("/aforos/salidas").permitAll()
                                             .requestMatchers("/configurations/images/types/{type}").permitAll()
-                                            .requestMatchers("/configurations/images/loads").permitAll()
                                             .anyRequest()
                                             .authenticated()
                               );
-        // .authenticationManager(authenticationManager)
-    // ;
 
     http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-    // http.exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPointJwt));
     http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     
     return http.build();

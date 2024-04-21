@@ -58,7 +58,7 @@ public class ProcessConfigurationImage
 
   /**
    * Método que permite cargar imagenes de forma masiva al repositorio
-   * @return Mensaje indicando que el cargue fue exitoso, en caso contrario devuelve un mensaje indicando que no se pudo cargar
+   * @return Listado de urls de las imagenes cargadas
    */
   public Map<String, Object> loadImagesConfiguraions() 
   {
@@ -71,9 +71,11 @@ public class ProcessConfigurationImage
 
     try
     {
+      List<String> lstImagesConfigurations = new ArrayList<>();
 
-      // En este archivo se debe colocar el url de la imagen del repositorio cloudinary (me paro sobre la imagen y hago clic en el tac <> copy link y lo pego en ese archivo)
-      File file = new File("/Volumes/Datos/Proyectos/unicentro/cloudinary/image-to-update/images.txt");
+      // En este archivo se debe colocar el nombre de la imagen ubicada en la colulma IMAGEN LOGO	oh IMAGEN FACHADA del excel
+      // pertenecientes a la tabla "configuration_images"
+      File file = new File("/Volumes/Datos/Proyectos/unicentro/cloudinary/load-images/configuration_images.txt");
 
       // Crear un FileInputStream para abrir el archivo
       fileInputStream = new FileInputStream(file);
@@ -90,11 +92,12 @@ public class ProcessConfigurationImage
       // Leer cada línea del archivo hasta el final
       while ((imageName = bufferedReader.readLine()) != null) 
       {
-        cloudinaryService.loadImage(imageName);
+        String urlImage = cloudinaryService.loadImage(imageName);
+        lstImagesConfigurations.add(urlImage);
       }
 
       mapResponse.put(Constants.RESPONSE_CODE, Constants.RESPONSE_OK_CODE);
-      mapResponse.put(Constants.RESPONSE_DATA, "Imágenes cargadas correctamente...");
+      mapResponse.put(Constants.RESPONSE_DATA, lstImagesConfigurations);
 
       return mapResponse;
     }

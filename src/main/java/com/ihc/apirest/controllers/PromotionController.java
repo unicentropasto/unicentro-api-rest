@@ -38,22 +38,22 @@ public class PromotionController
   }
 
 
-  /**
-   * Método que permite cargar todas las promociones
+    /**
+   * Método que permite cargar las promociones
+   * GUIA para correr este endpoint
+   * 
+   * 1. Si no carga el proyecto, entonces lo primero eliminar el archivo /Volumes/Datos/Proyectos/unicentro-api-rest/tokens/StoredCredential
+   * 
+   * 2. Se vuelve a levantar el backend para obtener en la consola el link para authenticar con google y despues de loguearnos a google el back crea automaticamente este archivo
+   * 
+   * 3. Validar si el excel tiene 6 columnas o tiene filas vacias al final del excel
    * @return Listado de promociones
    */
-  @GetMapping(value = "/loads")
-  public ResponseEntity<String> loadPromotions() 
+  @GetMapping(value = "/loads/images")
+  public ResponseEntity<Map<String, Object>> loadPromotions() 
   {
-    try
-    {
-      String msj = processPromotion.loadPromotions();
+    Map<String, Object> mapResponse = processPromotion.loadPromotions();
 
-      return new ResponseEntity<String>(msj, HttpStatus.OK);
-    }
-    catch (Exception e) 
-    {
-      return new ResponseEntity<String>("En el momento no fue posible cargar el archivo de promociones, favor intentarlo mas tarde.", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return new ResponseEntity<Map<String, Object>>(mapResponse, HttpStatus.OK);
   }
 }

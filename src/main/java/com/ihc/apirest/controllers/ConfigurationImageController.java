@@ -33,7 +33,7 @@ public class ConfigurationImageController
 
   /**
    * Método que permite otener toda la configuración de imágenes
-   * @return Listado de configuración de imágen
+   * @return Listado de configuración de imágenes
    */
   @GetMapping(value = "/types/{type}")
   public ResponseEntity<Map<String, Object>> geConfigurationImagesByType(@PathVariable("type") String type)
@@ -45,8 +45,13 @@ public class ConfigurationImageController
 
 
   /**
-   * Método que permite cargar imagenes de configuración al repositorio
-   * @return Listado de imágenes cargadas
+   * Método que permite cargar la imagenes de configuración al repositorio
+   * GUIA para correr este endpoint
+   * 
+   * 1. En el archivo "/Volumes/Datos/Proyectos/unicentro/cloudinary/load-images/configuration_images.txt",
+   *    colocar las imagenes que pertenecen a la configuracion de imagenes y hacen referencia a la tabla "appmall.configuration_images"
+   *
+   * @return Listado con las urls de las imagenes cargadas
    */
   @GetMapping(value = "/loads")
   public ResponseEntity<Map<String, Object>> loadImagesConfiguraions() 

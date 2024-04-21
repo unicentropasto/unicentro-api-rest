@@ -36,4 +36,22 @@ public class CategoryController
 
     return new ResponseEntity<Map<String, Object>>(mapResponse, HttpStatus.OK);
   }
+
+
+  /**
+   * Método que permite cargar las imagenes de categorias al repositorio
+   * GUIA para correr este endpoint
+   * 
+   * 1. En el archivo "/Volumes/Datos/Proyectos/unicentro/cloudinary/load-images/categories_images.txt",
+   *    colocar las imagenes que pertenecen a las categorias y hacen referencia a la tabla "appmall.categories"
+   *
+   * @return Listado con las urls de las imagenes cargadas
+   */
+  @GetMapping(value = "/loads/images")
+  public ResponseEntity<Map<String, Object>> loadImagesCategories() 
+  {
+    Map<String, Object> mapResponse = processCategory.loadImagesCategories();
+
+    return new ResponseEntity<Map<String, Object>>(mapResponse, HttpStatus.OK);
+  }
 }

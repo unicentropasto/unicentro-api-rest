@@ -34,13 +34,13 @@ public class ProcessStore
 
 
   /**
-   * Método que permite cargar los locales desde el repositorio google drive
+   * Método que permite cargar las imagenes y logos de los locales
    * @return Lista de locales
    * @throws IOException
    * @throws GeneralSecurityException
    * @throws Exception
    */
-  public Map<String, Object>  loadStores()
+  public Map<String, Object> loadStores()
   {
     Map<String, Object> mapResponse = new HashMap<>();
 
