@@ -66,8 +66,8 @@ public class ProcessStore
             "".equals(lstRowExcel.get(0)) ? null : lstRowExcel.get(0).toUpperCase(), // Numero local
             "".equals(lstRowExcel.get(10)) ? null : lstRowExcel.get(10), // Ubicacion
             "".equals(lstRowExcel.get(3)) ? null : GenericFunctions.castNumericCell(lstRowExcel.get(3)), // Telefono
-            (null != fileImage) ? fileImage : Constants.URL_IMAGE_DEFAULT, // Url imagen logo
-            (null != fileImageFacade) ? fileImageFacade : Constants.URL_IMAGE_DEFAULT, // Url imagen fachada
+            (null != fileImage) ? fileImage : (null != storeBD) ? storeBD.getUrlStoreLogo() : Constants.URL_IMAGE_DEFAULT, // Url imagen logo
+            (null != fileImageFacade) ? fileImageFacade : (null != storeBD) ? storeBD.getUrlStoreImage() : Constants.URL_IMAGE_DEFAULT, // Url imagen fachada
             "".equals(lstRowExcel.get(7)) ? null : lstRowExcel.get(7), // Web
             "".equals(lstRowExcel.get(5)) ? null : lstRowExcel.get(5), // Instagram
             "".equals(lstRowExcel.get(4)) ? null : lstRowExcel.get(4), // Facebook

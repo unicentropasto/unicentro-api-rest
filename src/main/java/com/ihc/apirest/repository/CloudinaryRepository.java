@@ -37,17 +37,20 @@ public class CloudinaryRepository implements CloudinaryService
 
     file = new File("/Volumes/Datos/Proyectos/unicentro/cloudinary/image-repository/" + imageName);
 
-    // Creamos un map de opciones para la carga
-    Map<String, Object> options = new HashMap<String, Object>();
-    options.put("public_id", imageName.split("\\.")[0]);
-    options.put("overwrite", true);
-    options.put("resource_type", "image");
-    options.put("folder", "image-repository");
+    if(file.exists())
+    {
+      // Creamos un map de opciones para la carga
+      Map<String, Object> options = new HashMap<String, Object>();
+      options.put("public_id", imageName.split("\\.")[0]);
+      options.put("overwrite", true);
+      options.put("resource_type", "image");
+      options.put("folder", "image-repository");
+  
+      Map<String, Object> result = cloudinary.uploader().upload(file, options);
+  
+      imageUrl = result.get("secure_url").toString();
+    }
 
-    Map<String, Object> result = cloudinary.uploader().upload(file, options);
-
-    imageUrl = result.get("secure_url").toString();
-    
     return imageUrl;
   }
 
