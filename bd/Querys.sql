@@ -442,3 +442,6 @@ SELECT * from CI_ControlAccessDb.dbo.Tb_Agreement;
 SELECT * from CI_ControlAccessDb.dbo.Tb_Zone tz;
 SELECT * from CI_ControlAccessDb_New.dbo.Tb_Zone tz;
 
+
+
+SELECT DISTINCT tv.Value from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv
