@@ -445,3 +445,6 @@ SELECT * from CI_ControlAccessDb_New.dbo.Tb_Zone tz;
 
 
 SELECT DISTINCT tv.Value from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv
+
+
+select case 1 when 1 
