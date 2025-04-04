@@ -31,7 +31,7 @@ and nrod_cli in ('13072207')
 
 uc?id=
 
-https://drive.google.com/uc?id=1OgpNidwbdCDZB3d4yGL7oQgyRdsOL3VH
+https:drive.google.com/uc?id=1OgpNidwbdCDZB3d4yGL7oQgyRdsOL3VH
 
 INSERT INTO sisbol.cliente (tpid_cli,nrod_cli,exped_cli,nomb_cli,apel_cli,dire_cli,tele_cli,fnac_cli,sexo_cli,emai_cli,prof_cli,punt_cli,fuco_cli,id_barrio,customer_type,"password",id_role,pet,terms_conditions) VALUES
 	 ('01001','1085253061','PASTO-NARIÑO','MARIO FERNANDO','JOJOA ACOSTA','calle 28 n 20-50 torres del cielo 2','3182102258','1986-09-29','M','mario42004@gmail.com','04001',0,NULL,561,'WEB',NULL,2,NULL,NULL);
@@ -63,14 +63,14 @@ order by 1
 select * from appmall.promotions p;
 
 
---https://asset.cloudinary.com/hrqvk3zwl/6650081ff266343188184a006f946b3b
+--https:asset.cloudinary.com/hrqvk3zwl/6650081ff266343188184a006f946b3b
 
 
-update appmall.stores set url_store_logo = 'https://res.cloudinary.com/hrqvk3zwl/image/upload/v1680374988/image-repository/1-01_cafetto_logo_2022_yrkkbg.jpg', url_store_image = 'https://res.cloudinary.com/hrqvk3zwl/image/upload/v1680374981/image-repository/1-01_cafetto_fachada_2022_uflh2l.jpg';
+update appmall.stores set url_store_logo = 'https:res.cloudinary.com/hrqvk3zwl/image/upload/v1680374988/image-repository/1-01_cafetto_logo_2022_yrkkbg.jpg', url_store_image = 'https:res.cloudinary.com/hrqvk3zwl/image/upload/v1680374981/image-repository/1-01_cafetto_fachada_2022_uflh2l.jpg';
 
-https://res.cloudinary.com/hrqvk3zwl/image/upload/v1680379727/image-repository/icon-tiendas-home_pihde4.png
+https:res.cloudinary.com/hrqvk3zwl/image/upload/v1680379727/image-repository/icon-tiendas-home_pihde4.png
 
---https://medium.com/pic-s-curso-básico-de-react-native/flatlist-infinite-scroll-clase-4-b7703a8c8fcb ejemplo de paginacion
+--https:medium.com/pic-s-curso-básico-de-react-native/flatlist-infinite-scroll-clase-4-b7703a8c8fcb ejemplo de paginacion
 
 
 --delete from appmall.stores;
@@ -255,196 +255,252 @@ Guideline 5.1.1(v) - Data Collection and storage [OK] (eliminar cuenta)
 
 
 
-/******************************************************* QLIK 2024 ******************************************************************/
 
-/*
-SELECT 
-0 as cantidad,
-null as punto_pago, 
-t.TransactionDate as fecha_ingreso,
-null as fecha_egreso,
-DATEDIFF (HOUR, t.TransactionDate , GETDATE()) as horas,
-DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) as minutos, 
-0 valor,
-case 
-	when (tv.ValueName  = 'Plate') or (tv.ValueName = 'VehicleType' and tv.Value = '1') then 'Carros'
-	when (tv.ValueName = 'VehicleType' and tv.Value = '2') then 'Motos'
-else 'Bicicletas' end 
-as tipos_vehiculo,
-case when tv.Value IN ('1','2') then '' ELSE tv.Value end
-as vehiculo,
-case when DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 60 then 1 when (DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) > 60 and DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 120) then 2 when (DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) > 120 and DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 180) then 3 when (DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) > 180 and DATEDIFF (MINUTE, t.TransactionDate , GETDATE()) <= 240) then 4 else 5 end as rango
-from CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK)
-inner join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_Transaction
-where 0 = 
-(
-	SELECT count(1)
-	FROM CI_ControlAccessDb_New.dbo.Tb_Transaction t_temp WITH (NOLOCK)
-    where t_temp.Id_TransactionParent = t.Id_TransactionParent and t_temp.Id_Transaction != t.Id_TransactionParent
-    --where t_temp.Id_TransactionParent = t.Id_Transaction or (t_temp.Id_Transaction = t.Id_Transaction and t_temp.Id_TransactionParent is not null) era la forma vieja para darme cuenta cuando el vehiculo no tenia facturacion
-)
-and tv.Id_TransactionValue = 
-(
-	SELECT max(tv_temp.Id_TransactionValue)
-	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
-	where tv_temp.Id_Transaction = tv.Id_Transaction
-)
-and cast(t.TransactionDate as Date) = cast(GETDATE() as Date)
-UNION*/
-SELECT 
-b.Id_Billing as cantidad,
-b.Prefix as punto_pago, 
-DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) as fecha_ingreso,
-b.InvoiceDate as fecha_egreso,
-case when 0 != b.MinutesBilled then (b.MinutesBilled / 60) else 0 end as horas,
-b.MinutesBilled as minutos, 
-case b.Total when 0 then b.TotalAgreements ELSE b.Total end as valor,
-case 
-	when (b.Receipt like '%Carro%') then 'Carros'
-	when (b.Receipt like '%Moto%') then 'Motos'
-	when (b.Receipt like '%Bicicleta%') then 'Bicicletas'
-	when 'CARROS' = tz.Name then 'Carros' 
-else tz.Name end 
-as tipos_vehiculo,
-case when '' != b.Receipt and 0 != charindex('\nEntrada', b.Receipt) then
-	case when '' != TRIM(SUBSTRING(b.Receipt, charindex('Placa', b.Receipt)+6, (charindex('\nEntrada', b.Receipt)-charindex('Placa', b.Receipt))-6)) then 
-		TRIM(SUBSTRING(b.Receipt, charindex('Placa', b.Receipt)+6, (charindex('\nEntrada', b.Receipt)-charindex('Placa', b.Receipt))-6))
-	else
-		case when tv.Value IN ('1','2') then 
-			'' 
+
+
+
+
+
+select CAST(59000 / 50000 as INT) as p;
+
+select * from CI_ControlAccessDb_New.dbo.Tb_Billing b where b.IdInvoice in (12601);
+
+
+
+/******************************************************* QLIK ******************************************************************/
+
+--Hechos Parking 2025 SC
+--SELECT
+--MONTH(debug.fecha_ingreso) mes, DAY(debug.fecha_ingreso) dia, debug.tipos_vehiculo, sum(debug.valor) valor, sum(debug.cantidad_registros) cantidad_registros
+--from 
+--(
+	select  top 1
+	parking.cantidad, parking.punto_pago, parking.horas, parking.minutos, parking.valor, parking.tipos_vehiculo, parking.vehiculo, parking.rango, parking.concesiones, parking.convenio, parking.IdInvoice, parking.IdToken,
+	case parking.tipos_vehiculo
+		when 'Carros' then CAST(parking.valor / 50000 as INT)
+		when 'Motos' then CAST(parking.valor / 30000 as INT)
+		when 'Bicicletas' then CAST(parking.valor / 10000 as INT)
+		when 'Tarjeta Perdida' then 0
+	end as pernoctado,
+	case parking.tipos_vehiculo
+		when 'Carros' then case when (CAST(parking.valor / 50000 as INT) = 0) then 1 else CAST((parking.valor - 50000) / 4500 as INT) end
+		when 'Motos' then case when (CAST(parking.valor / 30000 as INT) = 0) then 1 else CAST((parking.valor - 30000) / 3300 as INT) end
+		when 'Bicicletas' then case when (CAST(parking.valor / 10000 as INT) = 0) then 1 else CAST((parking.valor - 10000) / 600 as INT) end
+		when 'Tarjeta Perdida' then 1
+	end as cantidad_registros,
+	case when 0 != (case parking.tipos_vehiculo
+						when 'Carros' then CAST(parking.valor / 50000 as INT)
+						when 'Motos' then CAST(parking.valor / 30000 as INT)
+						when 'Bicicletas' then CAST(parking.valor / 10000 as INT)
+						when 'Tarjeta Perdida' then 0
+						end
+					) 
+	then 
+		parking.fecha_egreso 
+	else 
+		parking.fecha_ingreso 
+	end as fecha_ingreso, 
+	parking.fecha_egreso
+	from 
+	(
+		SELECT 
+		b.Id_Billing as cantidad,
+		b.Prefix as punto_pago, 
+		DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) as fecha_ingreso,
+		b.InvoiceDate as fecha_egreso,
+		case when 0 != b.MinutesBilled then (b.MinutesBilled / 60) else 0 end as horas,
+		b.MinutesBilled as minutos,
+		b.Total as valor, 
+		case 
+			when b.Total = 20000 then 'Tarjeta Perdida'
+			when ((b.Total % 10600) in (0, 600, 1200, 10000))  then 'Bicicletas'
+			when ((b.Total % 33300) in (0, 3300)) then 'Motos'
+			when ((b.Total % 54500) in (0, 4500)) then 'Carros'
+		else tz.Name 
+		end as tipos_vehiculo,
+		case when '' != b.Receipt and 0 != charindex('id device', LOWER(b.Receipt)) then
+			case when '' != TRIM(SUBSTRING(b.Receipt, charindex('placa', LOWER(b.Receipt))+6, (charindex('id device', LOWER(b.Receipt))-charindex('placa', LOWER(b.Receipt)))-7)) then 
+				TRIM(SUBSTRING(b.Receipt, charindex('placa', LOWER(b.Receipt))+6, (charindex('id device', LOWER(b.Receipt))-charindex('placa', LOWER(b.Receipt)))-7))
+			else
+				case when tv.Value IN ('1','2','4') then 
+					'' 
+				else 
+					tv.Value 
+				end 
+			end
 		else 
-			tv.Value 
-		end 
-	end
-else 
-	''
-end as vehiculo,
-case when b.MinutesBilled <= 60 then 1 when (b.MinutesBilled > 60 and b.MinutesBilled <= 120) then 2 when (b.MinutesBilled > 120 and b.MinutesBilled <= 180) then 3 when (b.MinutesBilled > 180 and b.MinutesBilled <= 240) then 4 else 5 end as rango
-from CI_ControlAccessDb_New.dbo.Tb_Billing b WITH (NOLOCK)
-inner join CI_ControlAccessDb_New.dbo.Tb_Zone tz WITH (NOLOCK) on tz.Id_Zone = b.Id_Zone
-left join CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK) on t.Id_Transaction = b.Id_Transaction
-left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_TransactionParent 
-and tv.Id_TransactionValue = 
-(
-	SELECT max(tv_temp.Id_TransactionValue)
-	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
-	where tv_temp.Id_Transaction = tv.Id_Transaction 
-)
-where DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) >= '2023-11-01 00:00:00.000' //Trae los ultimos dos meses
+			case when tv.Value IN ('1','2','4') then 
+				'' 
+			else 
+				tv.Value 
+			end 
+		end as vehiculo,
+		case when b.MinutesBilled <= 60 then 1 when (b.MinutesBilled > 60 and b.MinutesBilled <= 120) then 2 when (b.MinutesBilled > 120 and b.MinutesBilled <= 180) then 3 when (b.MinutesBilled > 180 and b.MinutesBilled <= 240) then 4 else 5 end as rango,
+		'N/A Convenio' as concesiones,
+		'No' as convenio,
+		 b.IdInvoice,
+		 b.IdToken
+--		, b.InvoiceDate, b.Receipt, tv.Value, b.Total, b.TotalAgreements, b.TotalAdjustments, tz.Name, b.IdInvoice, b.LastInsert, b.IdToken, (SELECT top 1 ag.Id_Agreement from CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied ag where ag.Id_Billing = b.Id_Billing order by ag.Id_AgreementsApplied desc) as Id_Agreement
+		from CI_ControlAccessDb_New.dbo.Tb_Billing b WITH (NOLOCK)
+		left join CI_ControlAccessDb_New.dbo.Tb_Zone tz WITH (NOLOCK) on tz.Id_Zone = b.Id_Zone
+		left join CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK) on t.Id_Transaction = b.Id_Transaction
+		left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_TransactionParent 
+		and tv.Id_TransactionValue = 
+		(
+			SELECT max(tv_temp.Id_TransactionValue)
+			from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
+			where tv_temp.Id_Transaction = tv.Id_Transaction and tv_temp.ValueName = 'plate'
+		)
+		where YEAR(b.InvoiceDate) = 2025
+		and b.Prefix <> 'OAV1' --Se omiten registros de pruebas
+		and b.Total <> 0
+	) as parking
+--) as debug
+--where 1=1
+--and debug.IdInvoice in (12198) --quitar
+--and MONTH(debug.fecha_ingreso) in (11,12)
+--and DAY(debug.fecha_ingreso) = 16
+--and debug.tipos_vehiculo = 'Carros' --'Carros' 'Motos' 'Bicicletas' 'Tarjeta Perdida' --quitar
+--and debug.convenio = 'No'
+--and debug.cantidad in (951721886271) --quitar
+--and debug.tipos_vehiculo is null
+--and debug.pernoctado = 1
+--GROUP by MONTH(debug.fecha_ingreso), DAY(debug.fecha_ingreso), debug.tipos_vehiculo order by 1, 2
+--order by debug.IdInvoice 
+	UNION
+-- Hechos Parking 2025 CC
+--SELECT *
+--MONTH(debug.fecha_ingreso) mes, DAY(debug.fecha_ingreso) dia, debug.tipos_vehiculo, debug.convenio, debug.concesiones, sum(debug.valor) valor, sum(debug.cantidad_registros) cantidad_registros
+--from 
+--(
+	select top 1
+	parking.cantidad, parking.punto_pago, parking.horas, parking.minutos, parking.valor, parking.tipos_vehiculo, parking.vehiculo, parking.rango, parking.concesiones, parking.convenio, parking.IdInvoice, parking.IdToken,	
+	case parking.tipos_vehiculo
+		when 'Carros' then CAST(parking.valor / 50000 as INT)
+		when 'Motos' then CAST(parking.valor / 30000 as INT)
+		when 'Bicicletas' then CAST(parking.valor / 10000 as INT)
+		when 'Tarjeta Perdida' then 0
+	end as pernoctado,
+	case parking.tipos_vehiculo
+		when 'Carros' then case when (CAST(parking.valor / 50000 as INT) = 0) then 1 else CAST((parking.valor - 50000) / 4500 as INT) end
+		when 'Motos' then case when (CAST(parking.valor / 30000 as INT) = 0) then 1 else CAST((parking.valor - 30000) / 3300 as INT) end
+		when 'Bicicletas' then case when (CAST(parking.valor / 10000 as INT) = 0) then 1 else CAST((parking.valor - 10000) / 600 as INT) end
+		when 'Tarjeta Perdida' then 1
+	end as cantidad_registros,
+	case when 0 != (case parking.tipos_vehiculo
+						when 'Carros' then CAST(parking.valor / 50000 as INT)
+						when 'Motos' then CAST(parking.valor / 30000 as INT)
+						when 'Bicicletas' then CAST(parking.valor / 10000 as INT)
+						when 'Tarjeta Perdida' then 0
+						end
+					) 
+	then 
+		parking.fecha_egreso 
+	else 
+		parking.fecha_ingreso 
+	end as fecha_ingreso, 
+	parking.fecha_egreso
+	from 
+	(
+		SELECT 
+		b.Id_Billing as cantidad,
+		b.Prefix as punto_pago, 
+		DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) as fecha_ingreso,
+		b.InvoiceDate as fecha_egreso,
+		case when 0 != b.MinutesBilled then (b.MinutesBilled / 60) else 0 end as horas,
+		b.MinutesBilled as minutos,
+		b.Total as valor, 
+		case 
+			when (b.TotalAdjustments = 0 and tz.Name = 'Carros') then 'Carros'
+			when (b.TotalAdjustments = 0 and tz.Name = 'Motos') then 'Motos'
+			when b.Total = 20000 then 'Tarjeta Perdida'
+		else tz.Name 
+		end as tipos_vehiculo,
+		case when '' != b.Receipt and 0 != charindex('id device', LOWER(b.Receipt)) then
+			case when '' != TRIM(SUBSTRING(b.Receipt, charindex('placa', LOWER(b.Receipt))+6, (charindex('id device', LOWER(b.Receipt))-charindex('placa', LOWER(b.Receipt)))-7)) then 
+				TRIM(SUBSTRING(b.Receipt, charindex('placa', LOWER(b.Receipt))+6, (charindex('id device', LOWER(b.Receipt))-charindex('placa', LOWER(b.Receipt)))-7))
+			else
+				case when tv.Value IN ('1','2','4') then 
+					'' 
+				else 
+					tv.Value 
+				end 
+			end
+		else 
+			case when tv.Value IN ('1','2','4') then 
+				'' 
+			else 
+				tv.Value 
+			end 
+		end as vehiculo,
+		case when b.MinutesBilled <= 60 then 1 when (b.MinutesBilled > 60 and b.MinutesBilled <= 120) then 2 when (b.MinutesBilled > 120 and b.MinutesBilled <= 180) then 3 when (b.MinutesBilled > 180 and b.MinutesBilled <= 240) then 4 else 5 end as rango,
+		case (SELECT top 1 ag.Id_Agreement from CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied ag where ag.Id_Billing = b.Id_Billing order by ag.Id_AgreementsApplied desc)
+			when 1 then case when (b.TotalAdjustments = 0) then 'Cinemark' else 'N/A Convenio' end
+			when 2 then case when (b.TotalAdjustments = 0) then 'Jumbo' else 'N/A Convenio' end
+			when 3 then case when (b.TotalAdjustments = 0) then 'Jumbo' else 'N/A Convenio' end
+			when 4 then case when (b.TotalAdjustments = 0) then 'Empleados y Domiciliarios' else 'N/A Convenio' end
+			when 7 then case when (b.TotalAdjustments = 0) then 'Empleados Jumbo' else 'N/A Convenio' end  
+		end as concesiones,
+		'Si' as convenio,
+		b.IdInvoice,
+		b.IdToken
+		--, b.InvoiceDate, b.Receipt, tv.Value, b.Total, b.TotalAgreements, b.TotalAdjustments, tz.Name, b.IdInvoice, b.LastInsert, b.IdToken, (SELECT top 1 ag.Id_Agreement from CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied ag where ag.Id_Billing = b.Id_Billing order by ag.Id_AgreementsApplied desc) as Id_Agreement
+		from CI_ControlAccessDb_New.dbo.Tb_Billing b WITH (NOLOCK)
+		left join CI_ControlAccessDb_New.dbo.Tb_Zone tz WITH (NOLOCK) on tz.Id_Zone = b.Id_Zone
+		left join CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK) on t.Id_Transaction = b.Id_Transaction
+		left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_TransactionParent 
+		and tv.Id_TransactionValue = 
+		(
+			SELECT max(tv_temp.Id_TransactionValue)
+			from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
+			where tv_temp.Id_Transaction = tv.Id_Transaction and tv_temp.ValueName = 'plate'
+		)
+		where YEAR(b.InvoiceDate) = 2025
+		and b.Prefix <> 'OAV1' --Se omiten registros de pruebas
+		and b.TotalAdjustments = 0
+		and b.Total = 0
+		and b.TotalAgreements in (0,3300,4500) --tal vez toque agregar xa q cuadre con el excel
+	) as parking
+	where parking.concesiones is not null 
+	and parking.tipos_vehiculo is not null
+--) as debug
+--where 1=1
+--and debug.IdInvoice in (159011) --quitar
+--and MONTH(debug.fecha_ingreso) in (12)
+--and DAY(debug.fecha_ingreso) = 5	
+--and debug.tipos_vehiculo = 'Carros' --'Carros' 'Motos' 'Bicicletas' 'Tarjeta Perdida' --quitar
+--and debug.concesiones = 'Cinemark' --'Cinemark', 'Jumbo', 'Empleados Jumbo', 'Empleados y Domiciliarios' 'N/A Convenio'
+--and debug.IdToken = '252187063'
+--and debug.cantidad in (931733869305,931733856131) --quitar
+--and debug.pernoctado = 1
+--GROUP by MONTH(debug.fecha_ingreso), DAY(debug.fecha_ingreso), debug.tipos_vehiculo, debug.convenio, debug.concesiones order by 2
+--order by debug.IdInvoice
+--order by DAY(debug.fecha_ingreso), debug.concesiones, debug.IdToken
 ;
 
 
 
---query create table CI_ControlAccessDb_New.dbo.temp_billing
-SELECT 
---convert(varchar, b.InvoiceDate, 23), count(1) 
-b.*, tz.Name, tv.Value, tv.Id_TransactionValue
-from CI_ControlAccessDb_New.dbo.Tb_Billing b WITH (NOLOCK)
-left join CI_ControlAccessDb_New.dbo.Tb_Zone tz WITH (NOLOCK) on tz.Id_Zone = b.Id_Zone
-left join CI_ControlAccessDb_New.dbo.Tb_Transaction t WITH (NOLOCK) on t.Id_Transaction = b.Id_Transaction
-left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = t.Id_TransactionParent 
-and tv.Id_TransactionValue = 
-(
-	SELECT max(tv_temp.Id_TransactionValue)
-	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
-	where tv_temp.Id_Transaction = tv.Id_Transaction 
-	and tv_temp.Value NOT IN ('1','2')
-)
-where 1=1
-and b.IdInvoice in (491358)
---and b.Id_Billing != 1673113333958
---and DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) BETWEEN '2024-01-01 00:00:00.000' and '2024-01-01 23:59:00.000'
---and b.InvoiceDate BETWEEN '2024-01-03 00:00:00.000' and '2024-01-03 23:59:00.000'
---and b.Receipt like '%GCS827%'
---and tv.Value = 'GCS827'
---and b.SubTotal = 600
---order by b.IdInvoice
---GROUP by convert(varchar, b.InvoiceDate, 23)
+
+
+
+
+SELECT 39+175+25;
+
+--'803403668' >> 931733869305 (idbill)
+--'806753588' >> 931733856131 (idbill)
+
+
+SELECT *
+from CI_ControlAccessDb_New.dbo.Tb_Billing b
+where b.IdToken = '806753588'
+and MONTH(b.InvoiceDate) = 12
+and DAY(b.InvoiceDate) = 10
+and b.Id_Billing in (931733856131)
+; 
+
+
+SELECT ag.* 
+from CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied ag 
+where ag.Id_Billing = 931733856131 
+order by ag.Id_AgreementsApplied desc
 ;
-
-
-
-
-SELECT DISTINCT
-b.*, tv.Value, tv.Id_TransactionValue
-, case when (b.Name is null and b.TotalAgreements = 3300) then 'Motos' when (b.Name is null and b.TotalAgreements = 4500 or b.Name is null and b.Total in(4500)) then 'Carros' 
-when (b.Total in (600,1200,3600)) then 'Bicicletas' else b.Name end as tipos_vehiculo
---, case when (ag.Id_Agreement = 1) then 'Cinemark' when (ag.Id_Agreement = 3) then 'Jumbo' when (ag.Id_Agreement = 4) then 'Empleados y Domiciliarios' when (ag.Id_Agreement = 7) then 'Empleados Jumbo' else 'colocar convenio' end as convenio
---convert(varchar, b.InvoiceDate, 23) dia
---, count(1) duplicadas
-from CI_ControlAccessDb_New.dbo.temp_billing b
-left join CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv WITH (NOLOCK) on tv.Id_Transaction = b.Id_TransactionParent 
-and tv.Id_TransactionValue = 
-(
-	SELECT max(tv_temp.Id_TransactionValue)
-	from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv_temp WITH (NOLOCK)
-	where tv_temp.Id_Transaction = tv.Id_Transaction 
-	and tv_temp.Value NOT IN ('1','2')
-)
-left join CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied ag WITH (NOLOCK) on ag.Id_Billing = b.Id_Billing --incluye repetidos para convenio
-where 1=1
---and b.Id_Billing = 221704243247
---and b.IdInvoice in (1848809)
-and b.InvoiceDate BETWEEN '2024-01-01 00:00:00.000' and '2024-01-31 23:59:00.000' 
-and b.Total = 3300 --4500 --600 -- en qlik filtro por valor actual del parqueadero según vehículo
---and b.Total not in (0, 4500, 600, 3300) -- pergnotado
---and b.Total = 0 -- en qlik filtro para convenios
---and (b.Name <> 'Carros' or b.Name is null) and b.Receipt like '%Moto%' and b.Prefix <> 'OAV1' -- en qlik filtro para convenios activar cuando busque motos
---and (b.Name <> 'Motos' or b.Name is null) and b.Receipt like '%Carro%' and b.Prefix <> 'OAV1' -- en qlik filtro para convenios activar cuando busque carros
---and EXISTS (SELECT 1 from CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied where Id_Billing = b.Id_Billing) -- en qlik filtro para convenios
---group by convert(varchar, b.InvoiceDate, 23)
---order by 2 asc
-order by b.IdInvoice asc
---GROUP by 
-;
-
---NOTA: el query base solo tiene q tener el where b.InvoiceDate BETWEEN '2024-01-01 00:00:00.000' and '2024-01-31 23:59:00.000'
--- los otros filtros deben aplicarse en qlik para obtener la data segun su categoria (convenios motos, carros, bicis y ciudadano de a pie moto, carro y bici)
-
---NOTA: el tipos_vehiculo se debe colocar de acuerdo al b.Total si es 4500 carro si es 3300 moto y si es 600 bici
-
--- hay q sentarse hacer en qlik la tabla por tipos_vehiculo, convenios y pergnotados
-
-
-
-
-SELECT * from CI_ControlAccessDb_New.dbo.Tb_Zone tz
-;
-
-SELECT DATEADD(minute, -b.MinutesBilled, b.InvoiceDate) as fecha_ingreso, b.*
-from CI_ControlAccessDb_New.dbo.Tb_Billing b 
-where 1=1
-and b.Id_Billing in (191706232230)
---and b.IdInvoice in (491468)
---and b.SubTotal = 600
-;
-
-
-
-SELECT * from CI_ControlAccessDb_New.dbo.Tb_Transaction where Id_Transaction = '4-757514592'
-;
-
-SELECT * from CI_ControlAccessDb_New.dbo.Tb_TransactionValues where Id_Transaction = '2-757494233' order by 1
-;
-
-
-SELECT * from CI_ControlAccessDb_New.dbo.Tb_BillingItem
-where Id_Billing = 211704219462
-;
-
-SELECT * from CI_ControlAccessDb_New.dbo.Tb_AgreementsApplied
-where Id_Billing = 211704219462
-;
-
-
-SELECT * from CI_ControlAccessDb.dbo.Tb_Agreement;
-
-SELECT * from CI_ControlAccessDb.dbo.Tb_Zone tz;
-SELECT * from CI_ControlAccessDb_New.dbo.Tb_Zone tz;
-
-
-
-SELECT DISTINCT tv.Value from CI_ControlAccessDb_New.dbo.Tb_TransactionValues tv
-
-
-select case 1 when 1 
